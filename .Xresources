@@ -1,0 +1,12 @@
+!------
+! urxvt Color scheme
+! -----
+
+URxvt*scrollBar: false
+URxvt*transparent: true
+URxvt*shading: 25
+URxvt.font: xft:Ubuntu Mono:style=Regular:pixelsize=14
+URxvt.url-launcher: /usr/bin/xdg-open
+URxvt.resize-font.smaller: C-Down
+URxvt.resize-font.bigger: C-Up
+URxvt.saveLines: 9999
