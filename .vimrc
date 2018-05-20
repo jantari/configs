@@ -14,3 +14,8 @@ set autoread
 
 " Enable line numbers by default
 set number
+
+" Highlight current linne
+set cursorline
+highlight Cursorline cterm=bold ctermbg=darkblue
+
