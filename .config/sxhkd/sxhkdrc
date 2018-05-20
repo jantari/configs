@@ -11,8 +11,12 @@ super + @space
 	dmenu_run
 
 # make sxhkd reload its configuration files:
+#super + Escape
+#pkill -USR1 -x sxhkd
+
+# Lock the computer:
 super + Escape
-	pkill -USR1 -x sxhkd
+    i3lock --blur 5 --clock --wrongtext="" --ringcolor="#00000055" --insidecolor="#00000033" --linecolor="00000000" --indicator --timestr="%H:%M" --veriftext="" --insidewrongcolor="#FFFFFF00" --ringwrongcolor="#FF4444FF" --insidevercolor="#FFFFFF00" --ringvercolor="#00000055"
 
 #
 # bspwm hotkeys
