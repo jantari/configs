@@ -1,3 +1,4 @@
 set recolor-lightcolor "#0E090F"
-set recolor-lightcolor "#120D13"
+set recolor-lightcolor "#211718"
 set recolor
+set page-padding 4
