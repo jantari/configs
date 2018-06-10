@@ -8,7 +8,7 @@ super + Return
 
 # program launcher
 super + @space
-	dmenu_run
+	rofi -show run
 
 # make sxhkd reload its configuration files:
 #super + Escape
@@ -16,7 +16,7 @@ super + @space
 
 # Lock the computer:
 super + Escape
-    i3lock --blur 5 --clock --wrongtext="" --ringcolor="#00000055" --insidecolor="#00000033" --linecolor="00000000" --indicator --timestr="%H:%M" --veriftext="" --insidewrongcolor="#FFFFFF00" --ringwrongcolor="#FF4444FF" --insidevercolor="#FFFFFF00" --ringvercolor="#00000055"
+    ${HOME}/.config/sxhkd/lock.sh
 
 #
 # bspwm hotkeys

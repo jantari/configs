@@ -8,7 +8,7 @@ foreground = #ccffffff
 line-color = ${bar/top.background}
 line-size = 16
 
-underline-size = 2
+underline-size = 3
 spacing = 2
 padding-right = 5
 module-margin = 4
@@ -18,7 +18,7 @@ font-1 = "FontAwesome:size=10;0"
 font-2 = "Material Design Icons:style=Regular:size=14;2"
 
 modules-left = powermenu bspwm spotify
-modules-right = memory volume wired-network date
+modules-right = volume wired-network date
 
 [module/bspwm]
 type = internal/bspwm
@@ -58,25 +58,6 @@ type = internal/date
 
 date =  %%{F#99}%d.%m.%Y%%{F-}  %%{F#fff}%H:%M%%{F-}
 date-alt = %%{F#fff}%A, %d %B %Y  %%{F#fff}%H:%M%%{F#666}:%%{F#fba922}%S%%{F-}
-
-[module/memory]
-type = internal/memory
-format = <label> <bar-used>
-label = RAM
-
-bar-used-width = 30
-bar-used-foreground-0 = #aaff77
-bar-used-foreground-1 = #aaff77
-bar-used-foreground-2 = #fba922
-bar-used-foreground-3 = #ff5555
-bar-used-indicator = |
-bar-used-indicator-font = 1
-bar-used-indicator-foreground = #ff
-bar-used-fill = -
-bar-used-fill-font = 1
-bar-used-empty = -
-bar-used-empty-font = 1
-bar-used-empty-foreground = #444444
 
 [module/wired-network]
 type = internal/network

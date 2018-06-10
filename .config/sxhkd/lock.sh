@@ -1,0 +1,1 @@
+. "${HOME}/.cache/wal/colors.sh" && i3lock --blur 7 --clock --wrongtext="" --ringcolor="${color0}A0" --insidecolor="${color2}D0" --linecolor="#00000000" --indicator --timestr="%H:%M" --veriftext="" --insidewrongcolor="#FFFFFF00" --ringwrongcolor="${color3}FF" --insidevercolor="#FFFFFF00" --ringvercolor="#00000055"
