@@ -16,9 +16,9 @@ else
         -fill $color7 \
         -stroke $color0 \
         -strokewidth 4 \
-        -annotate +0+100 '' ~/Pictures/lock.png && \
+        -annotate +0+100 '' ~/.config/sxhkd/lock.png && \
     i3lock \
-        --image="/home/jantari/Pictures/lock.png" \
+        --image="/home/jantari/.config/sxhkd/lock.png" \
         --clock \
         --timestr="%H:%M" \
         --datecolor=00000000 \
