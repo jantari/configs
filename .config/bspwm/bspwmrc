@@ -2,9 +2,9 @@
 
 sxhkd &
 
-bspc monitor -d I II III IV V VI VII VIII IX
+bspc monitor -d I II III IV V VI
 
-bspc config border_width         4
+bspc config border_width        2
 bspc config window_gap          18
 bspc config click_to_focus      true
 
@@ -18,10 +18,13 @@ bspc rule -a mplayer2 state=floating
 bspc rule -a Screenkey manage=off
 
 # Start other programs
+
+BACKGROUND_IMAGE=~/Pictures/lsELoyW.jpg
+
 killall -q polybar
-feh --bg-center /home/jantari/Bilder/zD7KecO.jpg
-wal -i /home/jantari/Bilder/zD7KecO.jpg
-polybar top &
+feh --bg-fill $BACKGROUND_IMAGE
+#wal -i $BACKGROUND_IMAGE -n
+#polybar top &
 
 # Source wal-colors for use in bspwm
 . "${HOME}/.cache/wal/colors.sh"
