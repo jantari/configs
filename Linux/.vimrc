@@ -17,5 +17,5 @@ set number
 
 " Highlight current linne
 set cursorline
-highlight Cursorline cterm=bold ctermbg=darkblue
+highlight Cursorline cterm=bold
 
