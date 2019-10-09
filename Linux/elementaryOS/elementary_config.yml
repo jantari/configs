@@ -1,0 +1,85 @@
+---
+- name: Configuring elementaryOS 0.5
+  hosts: localhost
+  tasks:
+    - name: Add VSCode repository
+      become: yes
+      copy:
+        dest: "/etc/apt/sources.list.d/vscode.list"
+        content: |
+          deb [arch=amd64 signed-by=/usr/share/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main
+
+    - name: Add Microsoft GPG key for packages
+      become: yes
+      apt_key:
+        url: https://packages.microsoft.com/keys/microsoft.asc
+        keyring: /usr/share/keyrings/packages.microsoft.gpg
+        state: present
+
+    - name: Add elementary Tweaks repository
+      become: yes
+      apt_repository:
+        repo: ppa:philip.scott/elementary-tweaks
+
+    - name: Update repository and packages
+      become: yes
+      apt:
+        update_cache: yes
+        upgrade: yes
+
+    - name: Install packages
+      become: yes
+      apt:
+        name: "{{ packages }}"
+      vars:
+        packages:
+        - firefox
+        - neofetch
+        - tree
+        - vifm
+        - code
+        - elementary-tweaks
+
+    - name: Turn on dark theme
+      copy:
+        dest: "~/.config/gtk-3.0/settings.ini"
+        content: |
+          [Settings]
+          gtk-application-prefer-dark-theme=1
+
+    - name: Set terminal theme to Oceanic Next Dark
+      command: gsettings set io.elementary.terminal.settings palette '#1b2b34:#343d46:#4f5b66:#65737e:#a7adba:#c0c5ce:#cdd3de:#d8dee9:#ec5f67:#f99157:#fac863:#99c794:#62b3b2:#6699cc:#c594c5:#ab7967:#ffffff'
+
+    - name: Set vimrc
+      copy:
+        dest: "~/.vimrc"
+        content: |
+          " Make :W save as superuser
+          command W w !sudo tee % > /dev/null
+
+          " 4 spaces instead of Tab
+          set expandtab
+          set shiftwidth=4
+          set tabstop=4
+
+          " Set to auto read when a file is changed from the outside
+          set autoread
+
+          " Enable line numbers by default
+          set number
+
+          " Ignore case when searching
+          set ignorecase
+
+          " Show matching bracket when cursor is hovering one
+          set showmatch
+
+          " Turn off backup and swapfiles
+          set nobackup
+          set nowb
+          set noswapfile
+
+          " Highlight current linne
+          set cursorline
+          highlight Cursorline cterm=bold
+
