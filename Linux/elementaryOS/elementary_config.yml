@@ -39,6 +39,7 @@
         - vifm
         - code
         - elementary-tweaks
+        - git
 
     - name: Turn on dark theme
       copy:
