@@ -21,6 +21,12 @@
       apt_repository:
         repo: ppa:philip.scott/elementary-tweaks
 
+    - name: Remove vim to make room for neovim
+      become: yes
+      apt:
+        name: vim
+        state: absent
+
     - name: Update repository and packages
       become: yes
       apt:
@@ -40,6 +46,8 @@
         - code
         - elementary-tweaks
         - git
+        - neovim
+        - fonts-firacode
 
     - name: Turn on dark theme
       copy:
@@ -51,26 +59,26 @@
     - name: Set terminal theme to Oceanic Next Dark
       command: gsettings set io.elementary.terminal.settings palette '#1b2b34:#343d46:#4f5b66:#65737e:#a7adba:#c0c5ce:#cdd3de:#d8dee9:#ec5f67:#f99157:#fac863:#99c794:#62b3b2:#6699cc:#c594c5:#ab7967:#ffffff'
 
-    - name: Create vim directories
+    - name: Set terminal font to Fira Code
+      command: gsettings set io.elementary.terminal.settings font 'Fira Code 11'
+
+    - name: Create neovim directory
       file:
-        path: '{{ item }}'
+        path: "{{ item }}"
         state: directory
       with_items:
-        - ~/.vim/autoload
-        - ~/.vim/bundle
+        - ~/.config/nvim
+        - ~/.local/share/nvim/site/autoload
 
-    - name: Install pathogen.vim
+    - name: Install vim-plug
       get_url:
-        url: https://tpo.pe/pathogen.vim
-        dest: ~/.vim/autoload/pathogen.vim
+        url: https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+        dest: ~/.local/share/nvim/site/autoload/plug.vim
 
     - name: Set vimrc
       copy:
-        dest: "~/.vimrc"
+        dest: "~/.config/nvim/init.vim"
         content: |
-          " Load pathogen
-          execute pathogen#infect()
-          
           " Make :W save as superuser
           command W w !sudo tee % > /dev/null
 
@@ -100,10 +108,17 @@
           set cursorline
           highlight Cursorline cterm=bold
 
+          " Load vim-plug plugins
+          call plug#begin()
+          Plug 'neoclide/coc.nvim', {'branch': 'release'}
+          Plug 'scrooloose/nerdtree'
+          Plug 'taigacute/spaceline.vim'
+          Plug 'ryanoasis/vim-devicons'
+          call plug#end()
+
           " Open NERDTree with Ctrl + B
           map <C-b> :NERDTreeToggle<CR>
 
-    - name: Install NERDTree vim plugin
-      git:
-        repo: 'https://github.com/scrooloose/nerdtree.git'
-        dest: ~/.vim/bundle/nerdtree
+    - name: Install all vim-plug plugins
+      command: nvim -E -s -c "source ~/.config/nvim/init.vim" -c PlugInstall -c qa
+
