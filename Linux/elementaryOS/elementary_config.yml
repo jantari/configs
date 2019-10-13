@@ -47,7 +47,32 @@
         - elementary-tweaks
         - git
         - neovim
-        - fonts-firacode
+
+    - name: Create local user font directory for Fira Code Nerd Font
+      file:
+        path: ~/.local/share/fonts/firacodenerdfont
+        state: directory
+
+    - name: Find latest Nerd Fonts release
+      uri:
+        url: https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest
+        return_content: true
+      register: nerdfonts_releases
+
+    - set_fact:
+        dl_url: "{{ nerdfonts_releases.json.assets | selectattr('name', 'equalto', 'FiraCode.zip') | list }}"
+
+    - name: Download and extract Fira Code Patched Nerd Font
+      unarchive:
+        src: "{{ dl_url[0].browser_download_url }}"
+        dest: ~/.local/share/fonts/firacodenerdfont
+        remote_src: yes
+
+    - name: Set terminal theme to Oceanic Next Dark
+      command: gsettings set io.elementary.terminal.settings palette '#1b2b34:#343d46:#4f5b66:#65737e:#a7adba:#c0c5ce:#cdd3de:#d8dee9:#ec5f67:#f99157:#fac863:#99c794:#62b3b2:#6699cc:#c594c5:#ab7967:#ffffff'
+
+    - name: Set terminal font to Fira Code
+      command: gsettings set io.elementary.terminal.settings font 'Fira Code 11'
 
     - name: Turn on dark theme
       copy:
@@ -56,11 +81,8 @@
           [Settings]
           gtk-application-prefer-dark-theme=1
 
-    - name: Set terminal theme to Oceanic Next Dark
-      command: gsettings set io.elementary.terminal.settings palette '#1b2b34:#343d46:#4f5b66:#65737e:#a7adba:#c0c5ce:#cdd3de:#d8dee9:#ec5f67:#f99157:#fac863:#99c794:#62b3b2:#6699cc:#c594c5:#ab7967:#ffffff'
-
-    - name: Set terminal font to Fira Code
-      command: gsettings set io.elementary.terminal.settings font 'Fira Code 11'
+    - name: Require double-click to open files
+      command: gsettings set io.elementary.files.preferences single-click false
 
     - name: Create neovim directory
       file:
@@ -121,4 +143,3 @@
 
     - name: Install all vim-plug plugins
       command: nvim -E -s -c "source ~/.config/nvim/init.vim" -c PlugInstall -c qa
-
