@@ -21,17 +21,17 @@
       apt_repository:
         repo: ppa:philip.scott/elementary-tweaks
 
-    - name: Remove vim to make room for neovim
+    - name: Remove some of the pre-installed software
       become: yes
       apt:
-        name: vim
+        name: vim, epiphany-browser
         state: absent
 
     - name: Update repository and packages
       become: yes
       apt:
         update_cache: yes
-        upgrade: yes
+        upgrade: "yes"
 
     - name: Install packages
       become: yes
@@ -83,6 +83,33 @@
 
     - name: Require double-click to open files
       command: gsettings set io.elementary.files.preferences single-click false
+
+    - name: Remove some applications from the dock
+      file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - "~/.config/plank/dock1/launchers/org.gnome.Epiphany.dockitem"
+        - "~/.config/plank/dock1/launchers/io.elementary.videos.dockitem"
+        - "~/.config/plank/dock1/launchers/io.elementary.appcenter.dockitem"
+
+    - name: Create a directory that already exists because ansible is dumb
+      command: touch "~/.config/plank/dock1/launchers/io.elementary.terminal.dockitem"
+
+    - name: Pin terminal to the dock
+      copy:
+        dest: "~/.config/plank/dock1/launchers/io.elementary.terminal.dockitem"
+        force: yes
+        content: |
+          [PlankDockItemPreferences]
+          Launcher=file:///usr/share/applications/io.elementary.terminal.desktop
+
+    - name: Pin files to the dock
+      copy:
+        dest: "~/.config/plank/dock1/launchers/io.elementary.files.dockitem"
+        content: |
+          [PlankDockItemPreferences]
+          Launcher=file:///usr/share/applications/io.elementary.files.desktop
 
     - name: Create neovim directory
       file:
