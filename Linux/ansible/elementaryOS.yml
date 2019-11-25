@@ -176,5 +176,9 @@
           " Open NERDTree with Ctrl + B
           map <C-b> :NERDTreeFocus<CR>
 
+          " Close vim if the only window left open is NERDTree
+          autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
     - name: Install all vim-plug plugins
       command: nvim -E -s -c "source ~/.config/nvim/init.vim" -c PlugInstall -c qa
+
