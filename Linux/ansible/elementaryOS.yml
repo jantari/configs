@@ -1,6 +1,8 @@
 ---
 - name: Configuring elementaryOS 0.5
   hosts: localhost
+  vars:
+    terminal_colors: "'#1b2b34:#343d46:#4f5b66:#65737e:#a7adba:#c0c5ce:#cdd3de:#d8dee9:#ec5f67:#f99157:#fac863:#99c794:#62b3b2:#6699cc:#c594c5:#ab7967:#ffffff'"
   tasks:
     - name: Add VSCode repository
       become: yes
@@ -68,8 +70,14 @@
         dest: ~/.local/share/fonts/firacodenerdfont
         remote_src: yes
 
+    - name: Get current terminal colors
+      command: "gsettings get io.elementary.terminal.settings palette"
+      register: current_terminal_colors
+      changed_when: false
+
     - name: Set terminal theme to Oceanic Next Dark
-      command: gsettings set io.elementary.terminal.settings palette '#1b2b34:#343d46:#4f5b66:#65737e:#a7adba:#c0c5ce:#cdd3de:#d8dee9:#ec5f67:#f99157:#fac863:#99c794:#62b3b2:#6699cc:#c594c5:#ab7967:#ffffff'
+      command: "gsettings set io.elementary.terminal.settings palette {{terminal_colors}}"
+      when: current_terminal_colors.stdout != terminal_colors
 
     - name: Set terminal font to Fira Code
       command: gsettings set io.elementary.terminal.settings font 'Fira Code 11'
