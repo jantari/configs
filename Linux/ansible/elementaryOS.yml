@@ -35,7 +35,7 @@
         update_cache: yes
         upgrade: "yes"
 
-    - name: Install packages
+    - name: Install deb packages
       become: yes
       apt:
         name: "{{ packages }}"
@@ -52,6 +52,23 @@
         - git
         - neovim
         - keepassxc
+
+    - name: Add Flathub source
+      flatpak_remote:
+        name: flathub
+        state: present
+        flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
+        method: user
+    
+    - name: Install flatpak packages
+      flatpak:
+        name: "{{ item }}"
+        state: present
+        remote: flathub
+        method: user
+      with_items:
+        - org.telegram.desktop
+        - com.spotify.Client
 
     - name: Create local user font directory for Fira Code Nerd Font
       file:
