@@ -51,6 +51,7 @@
         - ttf-ancient-fonts
         - git
         - neovim
+        - keepassxc
 
     - name: Create local user font directory for Fira Code Nerd Font
       file:
