@@ -78,9 +78,18 @@
       register: current_terminal_colors
       changed_when: false
 
+    - name: Get current terminal background color
+      command: "gsettings get io.elementary.terminal.settings background"
+      register: current_terminal_background
+      changed_when: false
+
     - name: Set terminal theme to Oceanic Next Dark
       command: "gsettings set io.elementary.terminal.settings palette {{terminal_colors}}"
       when: current_terminal_colors.stdout != terminal_colors
+
+    - name: Set terminal background color
+      command: "gsettings set io.elementary.terminal.settings background 'rgba(27, 43, 52, 0.95)'"
+      when: current_terminal_background != "'rgba(27, 43, 52, 0.95)'"
 
     - name: Set terminal font to Roboto Mono (since Fira Code renders wrong currently)
       command: gsettings set io.elementary.terminal.settings font 'Roboto Mono 10'
