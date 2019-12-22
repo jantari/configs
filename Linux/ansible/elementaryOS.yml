@@ -80,8 +80,8 @@
       command: "gsettings set io.elementary.terminal.settings palette {{terminal_colors}}"
       when: current_terminal_colors.stdout != terminal_colors
 
-    - name: Set terminal font to Fira Code
-      command: gsettings set io.elementary.terminal.settings font 'Fira Code Retina 12'
+    - name: Set terminal font to Roboto Mono (since Fira Code renders wrong currently)
+      command: gsettings set io.elementary.terminal.settings font 'Roboto Mono 10'
 
     - name: Turn on dark theme
       copy:
@@ -119,6 +119,14 @@
         content: |
           [PlankDockItemPreferences]
           Launcher=file:///usr/share/applications/io.elementary.files.desktop
+
+    - name: Set git config (username, email)
+      copy:
+        dest: ~/.gitconfig
+        content: |
+          [user]
+            name = jantari
+            email = jantari@github.com
 
     - name: Create neovim directory
       file:
