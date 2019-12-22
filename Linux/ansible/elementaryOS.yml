@@ -53,23 +53,6 @@
         - neovim
         - keepassxc
 
-    - name: Add Flathub source
-      flatpak_remote:
-        name: flathub
-        state: present
-        flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
-        method: user
-    
-    - name: Install flatpak packages
-      flatpak:
-        name: "{{ item }}"
-        state: present
-        remote: flathub
-        method: user
-      with_items:
-        - org.telegram.desktop
-        - com.spotify.Client
-
     - name: Create local user font directory for Fira Code Nerd Font
       file:
         path: ~/.local/share/fonts/firacodenerdfont
@@ -138,6 +121,9 @@
         content: |
           [PlankDockItemPreferences]
           Launcher=file:///usr/share/applications/io.elementary.files.desktop
+
+    - name: Set Super+E keybinding to open files
+      command: gsettings set org.gnome.settings-daemon.plugins.media-keys home '<Super>e'
 
     - name: Set git config (username, email)
       copy:
@@ -209,4 +195,21 @@
 
     - name: Install all vim-plug plugins
       command: nvim -E -s -c "source ~/.config/nvim/init.vim" -c PlugInstall -c qa
+
+    - name: Add Flathub source
+      flatpak_remote:
+        name: flathub
+        state: present
+        flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
+        method: user
+
+    - name: Install flatpak packages
+      flatpak:
+        name: "{{ item }}"
+        state: present
+        remote: flathub
+        method: user
+      with_items:
+        - org.telegram.desktop
+        - com.spotify.Client
 
