@@ -4,6 +4,7 @@
   vars:
     terminal_colors: "'#1b2b34:#343d46:#4f5b66:#65737e:#a7adba:#c0c5ce:#cdd3de:#d8dee9:#ec5f67:#f99157:#fac863:#99c794:#62b3b2:#6699cc:#c594c5:#ab7967:#ffffff'"
     terminal_background: "'rgba(27, 43, 52, 0.95)'"
+    wpsmi_dir: "{{ ansible_env.HOME }}/Downloads/wingpanel-indicator-sys-monitor"
   tasks:
     - name: Add VSCode repository
       become: yes
@@ -128,6 +129,7 @@
     - name: Pin files to the dock
       copy:
         dest: "~/.config/plank/dock1/launchers/io.elementary.files.dockitem"
+        force: yes
         content: |
           [PlankDockItemPreferences]
           Launcher=file:///usr/share/applications/io.elementary.files.desktop
@@ -205,6 +207,38 @@
 
     - name: Install all vim-plug plugins
       command: nvim -E -s -c "source ~/.config/nvim/init.vim" -c PlugInstall -c qa
+
+    - name: Install dependencies for Wingpanel System Monitor Indicator
+      become: yes
+      apt:
+        name: "{{ packages }}"
+      vars:
+        packages:
+        - libglib2.0-dev
+        - libgtop2-dev
+        - libgranite-dev
+        - libgtk-3-dev
+        - libwingpanel-2.0-dev
+        - meson
+        - valac
+
+    - name: Clone Wingpanel System Monitor Indicator repo
+      git:
+        repo: git@github.com:PlugaruT/wingpanel-indicator-sys-monitor.git
+        dest: "{{wpsmi_dir}}"
+
+    - name: Build Wingpanel System Monitor Indicator
+      shell: |
+        meson build --prefix=/usr
+        ninja -C ./build
+      args:
+        chdir: "{{wpsmi_dir}}"
+
+    - name: Install Wingpanel System Monitor Indicator
+      become: yes
+      command: ninja install
+      args:
+        chdir: "{{wpsmi_dir}}/build"
 
     - name: Add Flathub source
       flatpak_remote:
