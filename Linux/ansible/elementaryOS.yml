@@ -54,6 +54,7 @@
         - git
         - neovim
         - keepassxc
+        - com.github.cassidyjames.ideogram
 
     - name: Create local user font directory for Fira Code Nerd Font
       file:
@@ -136,6 +137,12 @@
 
     - name: Set Super+E keybinding to open files
       command: gsettings set org.gnome.settings-daemon.plugins.media-keys home '<Super>e'
+
+    - name: Set Super+. keybinding to open emoji picker
+      shell: |
+        gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ binding '<Super>period'
+        gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command 'com.github.cassidyjames.ideogram'
+        gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ name 'Ideogram emoji picker'
 
     - name: Set git config (username, email)
       copy:
