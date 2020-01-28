@@ -94,8 +94,8 @@
       command: "gsettings set io.elementary.terminal.settings background {{terminal_background}}"
       when: current_terminal_background.stdout != terminal_background
 
-    - name: Set terminal font to Roboto Mono (since Fira Code renders wrong currently)
-      command: gsettings set io.elementary.terminal.settings font 'Roboto Mono 10'
+    - name: Set terminal font to Fura Code patched Nerd Font
+      command: gsettings set io.elementary.terminal.settings font 'FuraCode Nerd Font Regular 10'
 
     - name: Turn on dark theme
       copy:
