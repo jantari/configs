@@ -97,6 +97,17 @@
     - name: Set terminal font to Fura Code patched Nerd Font
       command: gsettings set io.elementary.terminal.settings font 'FuraCode Nerd Font Regular 10'
 
+    - name: Install Oh-My-Bash
+      command: "sh -c \"$(curl -fsSL https://raw.github.com/ohmybash/oh-my-bash/master/tools/install.sh)\""
+      args:
+        creates: ~/.oh-my-bash
+
+    - name: Set agnoster theme for bash prompt
+      lineinfile:
+        path: ~/.bashrc
+        regexp: '^OSH_THEME='
+        line: OSH_THEME="agnoster"
+
     - name: Turn on dark theme
       copy:
         dest: "~/.config/gtk-3.0/settings.ini"
