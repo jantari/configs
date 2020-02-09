@@ -20,7 +20,8 @@ set so=4
 
 " Highlight current line
 set cursorline
-highlight cursorline cterm=inverse
+highlight CursorLine cterm=none
+highlight CursorLineNR cterm=inverse
 
 " Render invisible characters
 set list
