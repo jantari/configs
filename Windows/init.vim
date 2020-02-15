@@ -16,7 +16,7 @@ set tabstop=4
 set ignorecase
 
 " Keep 4 lines on screen ahead of the cursor 
-set so=4
+set scrolloff=4
 
 " Highlight current line
 set cursorline
