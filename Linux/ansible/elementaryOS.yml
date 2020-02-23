@@ -115,6 +115,9 @@
           [Settings]
           gtk-application-prefer-dark-theme=1
 
+    - name: Add minimize and maximize window buttons
+      command: gsettings set org.pantheon.desktop.gala.appearance button-layout ':minimize,maximize,close'
+
     - name: Require double-click to open files
       command: gsettings set io.elementary.files.preferences single-click false
 
@@ -183,6 +186,14 @@
           " Make :W save as superuser
           command W w !sudo tee % > /dev/null
 
+          " Enable line numbers by default
+          set number
+
+          " Turn off backup and swapfiles
+          set nobackup
+          set nowritebackup
+          set noswapfile
+
           " 4 spaces instead of Tab
           set expandtab
           set shiftwidth=4
@@ -191,34 +202,31 @@
           " Set to auto read when a file is changed from the outside
           set autoread
 
-          " Enable line numbers by default
-          set number
-
           " Ignore case when searching
           set ignorecase
+
+          " Keep 4 lines on screen ahead of cursor
+          set scrolloff=4
 
           " Show matching bracket when cursor is hovering one
           set showmatch
 
-          " Turn off backup and swapfiles
-          set nobackup
-          set nowb
-          set noswapfile
-
-          " Highlight current linne
+          " Highlight current line
           set cursorline
-          highlight Cursorline cterm=bold
+          highlight CursorLine cterm=none
+          highlight CursorLineNR cterm=inverse
 
           " Load vim-plug plugins
           call plug#begin()
-          Plug 'neoclide/coc.nvim', {'branch': 'release'}
-          Plug 'scrooloose/nerdtree'
-          Plug 'taigacute/spaceline.vim'
+          Plug 'PProvost/vim-ps1'
           Plug 'ryanoasis/vim-devicons'
+          Plug 'neoclide/coc.nvim', {'branch': 'release'}
+          Plug 'preservim/nerdtree'
+          Plug 'taigacute/spaceline.vim'
           call plug#end()
 
           " Open NERDTree with Ctrl + B
-          map <C-b> :NERDTreeFocus<CR>
+          map <C-b> :NERDTreeToggle<CR>
 
           " Close vim if the only window left open is NERDTree
           autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
