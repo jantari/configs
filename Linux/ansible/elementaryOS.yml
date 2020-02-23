@@ -186,10 +186,8 @@
           " Make :W save as superuser
           command W w !sudo tee % > /dev/null
 
-          " Enable line numbers by default
+          " General
           set number
-
-          " Tell vim we use a dark theme
           set background=dark
 
           " Turn off backup and swapfiles
@@ -202,11 +200,11 @@
           set shiftwidth=4
           set tabstop=4
 
-          " Set to auto read when a file is changed from the outside
-          set autoread
-
           " Ignore case when searching
           set ignorecase
+
+          " Set to auto read when a file is changed from the outside
+          set autoread
 
           " Keep 4 lines on screen ahead of cursor
           set scrolloff=4
@@ -218,6 +216,11 @@
           set cursorline
           highlight CursorLine cterm=none
           highlight CursorLineNR cterm=inverse
+
+          " Render invisible characters
+          set list
+          set listchars=tab:→\ ,nbsp:␣,space:·,trail:-,eol:↲
+          highlight NonText ctermfg=1
 
           " Load vim-plug plugins
           call plug#begin()
