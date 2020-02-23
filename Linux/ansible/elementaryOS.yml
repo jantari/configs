@@ -189,6 +189,9 @@
           " Enable line numbers by default
           set number
 
+          " Tell vim we use a dark theme
+          set background=dark
+
           " Turn off backup and swapfiles
           set nobackup
           set nowritebackup
@@ -222,6 +225,7 @@
           Plug 'ryanoasis/vim-devicons'
           Plug 'neoclide/coc.nvim', {'branch': 'release'}
           Plug 'preservim/nerdtree'
+          Plug 'pearofducks/ansible-vim'
           Plug 'taigacute/spaceline.vim'
           call plug#end()
 
