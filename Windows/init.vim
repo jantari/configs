@@ -41,8 +41,14 @@ Plug 'PProvost/vim-ps1'
 Plug 'ryanoasis/vim-devicons'
 Plug 'preservim/nerdtree'
 Plug 'pearofducks/ansible-vim'
-Plug 'taigacute/spaceline.vim'
+Plug 'itchyny/lightline.vim'
 call plug#end()
+
+" Lightline configurations
+set noshowmode
+let g:lightline = {
+    \ 'colorscheme': 'jellybeans',
+    \ }
 
 " Open NERDTree with Ctrl + B
 map <C-b> :NERDTreeToggle<CR>
