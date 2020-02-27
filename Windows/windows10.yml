@@ -1,0 +1,26 @@
+---
+
+- name: Configuring Windows 10
+  hosts: all
+  vars:
+  tasks:
+    - name: Install neovim
+      win_chocolatey:
+        name: neovim
+        state: latest
+        allow_prerelease: yes
+
+    - name: Install software
+      win_chocolatey:
+        name:
+        - git
+        - sed
+        - 7zip.install
+        - vscode
+        state: present
+
+    - name: Enable WSL
+      win_optional_feature:
+        name: Microsoft-Windows-Subsystem-Linux
+        state: present
+
