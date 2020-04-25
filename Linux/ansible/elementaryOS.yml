@@ -229,8 +229,13 @@
           Plug 'neoclide/coc.nvim', {'branch': 'release'}
           Plug 'preservim/nerdtree'
           Plug 'pearofducks/ansible-vim'
-          Plug 'taigacute/spaceline.vim'
+          Plug 'itchyny/lightline.vim'
           call plug#end()
+
+          set noshowmode
+          let g:lightline = {
+            \ 'colorscheme': 'jellybeans',
+            \ }
 
           " Open NERDTree with Ctrl + B
           map <C-b> :NERDTreeToggle<CR>
