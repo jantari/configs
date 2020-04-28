@@ -17,6 +17,7 @@
         - sed
         - 7zip.install
         - vscode
+        - powershell-preview
         state: present
 
     - name: Set cmd prompt and aliases
@@ -57,6 +58,9 @@
           " Show matching bracket when cursor is hovering one
           set showmatch
 
+          " Set indentation to 2 spaces for YAML
+          autocmd FileType yaml setlocal shiftwidth=2 tabstop=2 
+
           " Highlight current line
           set cursorline
           highlight CursorLine cterm=none
@@ -64,14 +68,16 @@
 
           " Render invisible characters
           set list
-          set listchars=tab:→\ ,nbsp:␣,space:·,trail:-,eol:↲
-          highlight NonText ctermfg=6
+          "set listchars=tab:→\ ,space:·,nbsp:␣,trail:·,eol:↲
+          set listchars=tab:→\ ,nbsp:␣,trail:·,eol:↲
+          highlight NonText ctermfg=0
 
           " Load vim-plug plugins
           call plug#begin()
           Plug 'PProvost/vim-ps1'
           Plug 'ryanoasis/vim-devicons'
           Plug 'preservim/nerdtree'
+          Plug 'Yggdroot/indentLine'
           Plug 'pearofducks/ansible-vim'
           Plug 'itchyny/lightline.vim'
           call plug#end()
@@ -81,6 +87,9 @@
           let g:lightline = {
               \ 'colorscheme': 'jellybeans',
               \ }
+
+          " Configure Indent-Guide
+          let g:indentLine_char = '▏'
 
           " Open NERDTree with Ctrl + B
           map <C-b> :NERDTreeToggle<CR>
