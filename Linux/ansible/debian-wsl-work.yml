@@ -1,0 +1,43 @@
+---
+
+- name: config debian
+  vars:
+  hosts:
+  tasks:
+    - name: Add ansible repository
+      become: yes
+      copy:
+        dest: "/etc/apt/sources.list.d/ansible.list"
+        content: "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty mainVSCode"
+
+    - name: Add ansible apt-key
+      become: yes
+      apt_key:
+        keyserver: keyserver.ubuntu.com
+        id: 93C4A3FD7BB9C367
+
+    - name: Update apt cache
+      become: yes
+      apt:
+        update_cache: yes
+
+    - name: Install packages
+      become: yes
+      apt:
+        - name:
+          - git
+          - curl
+          - ansible
+          - tree
+          - jq
+
+    - name: Download nord-dircolors
+      get_url:
+        url: https://github.com/arcticicestudio/nord-dircolors/blob/develop/src/dir_colors
+        dest: ~/.config/dir_colors
+
+    - name: Install nord-dircolors
+      lineinfile:
+        path: ~/.bashrc
+        line: test -r ~/.config/dir_colors && eval $(dircolors ~/.config/dir_colors)"
+
