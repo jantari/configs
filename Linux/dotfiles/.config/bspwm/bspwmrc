@@ -19,10 +19,10 @@ bspc rule -a Screenkey manage=off
 
 # Start other programs
 
-BACKGROUND_IMAGE=~/Pictures/lsELoyW.jpg
+BACKGROUND_IMAGE=/usr/share/backgrounds/Carmine De Fazio.jpg
 
 killall -q polybar
-feh --bg-fill $BACKGROUND_IMAGE
+feh --bg-fill "$BACKGROUND_IMAGE"
 #wal -i $BACKGROUND_IMAGE -n
 #polybar top &
 
