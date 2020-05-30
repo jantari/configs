@@ -52,8 +52,10 @@
         - elementary-tweaks
         - ttf-ancient-fonts
         - git
+        - curl
         - neovim
         - keepassxc
+        - fonts-materialdesignicons-webfont
         - com.github.cassidyjames.ideogram
 
     - name: Create local user font directory for Fira Code Nerd Font
