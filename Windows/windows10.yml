@@ -115,3 +115,21 @@
         name: Microsoft-Windows-Subsystem-Linux
         state: present
 
+    - name: Find latest Nerd Fonts release
+      win_uri:
+        url: https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest
+        return_content: true
+      register: nerdfonts_release
+
+    - set_fact:
+        dl_url: "{{ nerdfonts_release.json.assets | selectattr('name', 'equalto', 'FantasqueSansMono.zip') | list }}"
+
+    - name: Download font
+      win_get_url:
+        url: "{{ dl_url[0].browser_download_url }}"
+        dest: ~/FantasqueSansMono.zip
+
+    - name: Download and extract Fantasque Sans Mono Nerd Font
+      win_unzip:
+        src: ~/FantasqueSansMono.zip
+        dest: ~/FantasqueSansMonoUnzip
