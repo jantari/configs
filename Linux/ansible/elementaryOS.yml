@@ -34,7 +34,7 @@
     - name: Remove some of the pre-installed software
       become: yes
       apt:
-        name: vim, epiphany-browser
+        name: vim, epiphany-browser, cowsay
         state: absent
 
     - name: Update repository and packages
@@ -266,9 +266,11 @@
 
           " Close vim if the only window left open is NERDTree
           autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+      register: vimconfig
 
     - name: Install all vim-plug plugins
       command: nvim -E -s -c "source ~/.config/nvim/init.vim" -c PlugInstall -c qa
+      when: vimconfig.changed
 
     - name: Install dependencies for Wingpanel System Monitor Indicator
       become: yes
