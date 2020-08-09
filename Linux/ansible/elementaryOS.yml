@@ -1,9 +1,15 @@
 ---
+
 - name: Configuring elementaryOS 0.5.x
   hosts: localhost
   vars:
+    # Oceanic
     terminal_colors: "'#1b2b34:#343d46:#4f5b66:#65737e:#a7adba:#c0c5ce:#cdd3de:#d8dee9:#ec5f67:#f99157:#fac863:#99c794:#62b3b2:#6699cc:#c594c5:#ab7967:#ffffff'"
+    # Gruvbox Dark
+    terminal_colors: "'#282828:#cc241d:#98971a:#d79921:#458588:#b16286:#689d6a:#a89984:#928374:#fb4934:#b8bb26:#fabd2f:#83a598:#d3869b:#8ec07c:#ebdbb2:#ebdbb2'"
+    terminal_colors: "'#34434b:#cc241d:#98971a:#d79921:#458588:#b16286:#689d6a:#a89984:#928374:#fb4934:#b8bb26:#fabd2f:#83a598:#d3869b:#8ec07c:#ebdbb2:#ebdbb2'"
     terminal_background: "'rgba(27, 43, 52, 0.95)'"
+    terminal_background: "'rgba(40, 40, 40, 0.95)'"
     wpsmi_dir: "{{ ansible_env.HOME }}/Downloads/wingpanel-indicator-sys-monitor"
   tasks:
     - name: Add VSCode repository
@@ -205,6 +211,9 @@
           " Ignore case when searching
           set ignorecase
 
+          " Copy to system clipboard with Ctrl-C
+          vnoremap <C-c> "+y
+
           " Set to auto read when a file is changed from the outside
           set autoread
 
@@ -214,30 +223,40 @@
           " Show matching bracket when cursor is hovering one
           set showmatch
 
+          " Set indentation to 2 spaces for YAML
+          autocmd FileType yaml setlocal shiftwidth=2 tabstop=2
+
           " Highlight current line
           set cursorline
           highlight CursorLine cterm=none
           highlight CursorLineNR cterm=inverse
 
+          " No fat background highlight on split divider
+          highlight VertSplit cterm=NONE
+
           " Render invisible characters
           set list
           set listchars=tab:→\ ,nbsp:␣,space:·,trail:-,eol:↲
-          highlight NonText ctermfg=1
+          set listchars=tab:→\ ,nbsp:␣,trail:·,eol:↲
+          highlight NonText ctermfg=0
 
           " Load vim-plug plugins
           call plug#begin()
-          Plug 'PProvost/vim-ps1'
+          Plug 'sheerun/vim-polyglot'
           Plug 'ryanoasis/vim-devicons'
-          Plug 'neoclide/coc.nvim', {'branch': 'release'}
           Plug 'preservim/nerdtree'
-          Plug 'pearofducks/ansible-vim'
+          Plug 'Yggdroot/indentLine'
           Plug 'itchyny/lightline.vim'
+          Plug 'neoclide/coc.nvim', {'branch': 'release'}
           call plug#end()
 
           set noshowmode
           let g:lightline = {
             \ 'colorscheme': 'jellybeans',
             \ }
+
+            " Configure Indent-Guide
+          let g:indentLine_char = '▏'
 
           " Open NERDTree with Ctrl + B
           map <C-b> :NERDTreeToggle<CR>
