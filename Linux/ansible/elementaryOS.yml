@@ -64,10 +64,13 @@
         - fonts-materialdesignicons-webfont
         - com.github.cassidyjames.ideogram
 
-    - name: Create local user font directory for Fira Code Nerd Font
+    - name: Create local user font directory Nerd Fonts
       file:
-        path: ~/.local/share/fonts/firacodenerdfont
+        path: "~/.local/share/fonts/{{ item }}"
         state: directory
+      loop:
+        - firacodenerdfont
+        - fantasquenerdfont
 
     - name: Find latest Nerd Fonts release
       uri:
@@ -75,13 +78,24 @@
         return_content: true
       register: nerdfonts_releases
 
-    - set_fact:
-        dl_url: "{{ nerdfonts_releases.json.assets | selectattr('name', 'equalto', 'FiraCode.zip') | list }}"
+    - name: Get Fira Code download link
+      set_fact:
+        fc_dl_url: "{{ nerdfonts_releases.json.assets | selectattr('name', 'equalto', 'FiraCode.zip') | list }}"
+
+    - name: Get Fantasque Sans Mono download link
+      set_fact:
+        fsm_dl_url: "{{ nerdfonts_releases.json.assets | selectattr('name', 'equalto', 'FantasqueSansMono.zip') | list }}"
 
     - name: Download and extract Fira Code Patched Nerd Font
       unarchive:
-        src: "{{ dl_url[0].browser_download_url }}"
+        src: "{{ fc_dl_url[0].browser_download_url }}"
         dest: ~/.local/share/fonts/firacodenerdfont
+        remote_src: yes
+
+    - name: Download and extract Fantasque Sans Mono Patched Nerd Font
+      unarchive:
+        src: "{{ fsm_dl_url[0].browser_download_url }}"
+        dest: ~/.local/share/fonts/fantasquenerdfont
         remote_src: yes
 
     - name: Get current terminal colors
@@ -102,8 +116,11 @@
       command: "gsettings set io.elementary.terminal.settings background {{terminal_background}}"
       when: current_terminal_background.stdout != terminal_background
 
+#    - name: Set terminal font to Fura Code patched Nerd Font
+#      command: gsettings set io.elementary.terminal.settings font 'FuraCode Nerd Font Regular 10'
+
     - name: Set terminal font to Fura Code patched Nerd Font
-      command: gsettings set io.elementary.terminal.settings font 'FuraCode Nerd Font Regular 10'
+      command: gsettings set io.elementary.terminal.settings font 'Fantasque Sans Mono Nerd Font 12'
 
     - name: Install Oh-My-Bash
       command: "sh -c \"$(curl -fsSL https://raw.github.com/ohmybash/oh-my-bash/master/tools/install.sh)\""
