@@ -127,9 +127,10 @@
     - name: Download font
       win_get_url:
         url: "{{ dl_url[0].browser_download_url }}"
-        dest: ~/FantasqueSansMono.zip
+        dest: "%USERPROFILE%/FantasqueSansMono.zip"
 
     - name: Download and extract Fantasque Sans Mono Nerd Font
       win_unzip:
-        src: ~/FantasqueSansMono.zip
-        dest: ~/FantasqueSansMonoUnzip
+        src: "%USERPROFILE%/FantasqueSansMono.zip"
+        dest: "%USERPROFILE%/FantasqueSansMonoUnzip"
+
