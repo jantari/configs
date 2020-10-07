@@ -1,0 +1,10 @@
+---
+
+# This is just a file with notes and sample tasks not a real plabook
+
+# Get Nord colorschme on XFCE Terminal
+- name: Install Nord colorscheme for xfce-terminal
+  get_url:
+    url: https://raw.githubusercontent.com/arcticicestudio/nord-xfce-terminal/develop/src/nord.theme
+    dest: ~/.config/xfce4/terminal/colorschemes
+    
