@@ -1,0 +1,30 @@
+# This is Git's per-user configuration file.
+# Requires delta: https://github.com/dandavison/delta
+
+[user]
+# Please adapt and uncomment the following lines:
+    name = jantari
+    email = jantari@github.com
+
+[core]
+    pager = delta
+
+[interactive]
+    diffFilter = delta --color-only
+
+[delta]
+    features = line-numbers decorations
+    whitespace-error-style = 22 reverse
+    #syntax-theme = Dracula
+
+[delta "decorations"]
+    commit-decoration-style = bold
+    file-style = yellow ul
+    file-decoration-style = none
+    hunk-header-style = omit
+
+[filter "lfs"]
+    clean = git-lfs clean -- %f
+    smudge = git-lfs smudge -- %f
+    process = git-lfs filter-process
+    required = true
