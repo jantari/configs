@@ -14,8 +14,9 @@
       win_chocolatey:
         name:
         - git
+        - delta
         - sed
-        - 7zip.install
+        - 7zip
         - vscode
         - powershell-preview
         state: present
@@ -113,6 +114,13 @@
     - name: Enable WSL
       win_optional_feature:
         name: Microsoft-Windows-Subsystem-Linux
+        state: present
+
+    - name: Set COLORTERM environment variable (for delta)
+      win_environment:
+        name: COLORTERM
+        value: truecolor
+        level: user
         state: present
 
     - name: Find latest Nerd Fonts release
