@@ -8,6 +8,8 @@
 
 [core]
     pager = delta
+    # The first three are git defaults, cr-at-eol prevents CRLF line endings from being highlighted as ^M in diffs
+    whitespace = blank-at-eol, blank-at-eof, space-before-tab, cr-at-eol
 
 [interactive]
     diffFilter = delta --color-only
