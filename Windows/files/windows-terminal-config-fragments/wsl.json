@@ -1,0 +1,38 @@
+{
+    "$schema": "https://aka.ms/terminal-profiles-schema",
+    "profiles":
+    [
+		{
+			"updates": "{58ad8b0c-3ef8-5f4d-bc6f-13e4c00f2530}",
+			//"name": "Debian",
+			"colorScheme" : "Nord",
+			"hidden": false,
+			"cursorShape":"underscore",
+			"fontFace" : "FantasqueSansMono Nerd Font",
+			"fontSize": 16,
+			"backgroundImage": "%LOCALAPPDATA%/WSL_ICONS/wt-wsl-debian-logo.png",
+			"backgroundImageStretchMode": "none",
+			"backgroundImageOpacity": 0.3,
+			"backgroundImageAlignment": "bottomRight",
+			"useAcrylic" : false,
+			"acrylicOpacity" : 0.86,
+			"source": "Windows.Terminal.Wsl"
+		},
+		{
+			"updates": "{07b52e3e-de2c-5db4-bd2d-ba144ed6c273}",
+			//"name": "Ubuntu 20.04",
+			"colorScheme": "Nord",
+			"hidden": false,
+			"cursorShape":"underscore",
+			"fontFace" : "FantasqueSansMono Nerd Font",
+			"fontSize": 16,
+			"backgroundImage": "%LOCALAPPDATA%/WSL_ICONS/wt-wsl-ubuntu-logo.png",
+			"backgroundImageStretchMode": "none",
+			"backgroundImageOpacity": 0.3,
+			"backgroundImageAlignment": "bottomRight",
+			"useAcrylic": true,
+			"acrylicOpacity": 0.86,
+			"source": "Windows.Terminal.Wsl"
+		}
+    ]
+}
