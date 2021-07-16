@@ -29,7 +29,10 @@ set scrolloff=4
 set showmatch
 
 " Set indentation to 2 spaces for YAML
-autocmd FileType yaml setlocal shiftwidth=2 tabstop=2 
+autocmd FileType yaml setlocal shiftwidth=2 tabstop=2
+
+# When we create a NEW .ps1 file with vim, add a BOM by default
+autocmd FileType ps1 setlocal bomb
 
 " Enable 24-bit TrueColor
 if (empty($TMUX))
