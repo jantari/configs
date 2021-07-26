@@ -22,14 +22,14 @@ vnoremap <C-c> "+y
 " Set to auto read when a file is changed from the outside
 set autoread
 
-" Keep 4 lines on screen ahead of the cursor 
+" Keep 4 lines on screen ahead of the cursor
 set scrolloff=4
 
 " Show matching bracket when cursor is hovering one
 set showmatch
 
 " Set indentation to 2 spaces for YAML
-autocmd FileType yaml setlocal shiftwidth=2 tabstop=2 
+autocmd FileType yaml setlocal shiftwidth=2 tabstop=2
 
 " Enable 24-bit TrueColor
 if (empty($TMUX))
@@ -62,7 +62,7 @@ highlight CursorLine cterm=none
 highlight CursorLineNR cterm=inverse gui=inverse
 
 " No fat background highlight on split divider
-highlight VertSplit cterm=NONE guifg=Text
+highlight VertSplit cterm=inverse guifg=Text
 
 " Override parts of the theme. Particularly the background
 " so that the terminals background is seen through instead.
@@ -76,7 +76,7 @@ highlight! Directory guibg=None
 " Render invisible characters
 set list
 set listchars=tab:→\ ,nbsp:␣,trail:·,eol:↲
-highlight NonText ctermfg=0 guibg=None
+highlight NonText guibg=None
 
 " Lightline configurations
 set noshowmode
