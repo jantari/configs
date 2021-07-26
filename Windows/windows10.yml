@@ -26,7 +26,7 @@
       win_regedit:
         path: 'HKLM:\Software\Microsoft\Command Processor'
         name: AutoRun
-        data: 'prompt $E[92m%USERNAME%@%COMPUTERNAME%$E[0m:$E[32m$P$E[0m$_$E(0mq$E(B cmd$G & doskey ls=dir $* & doskey cat=type $* & doskey reboot=shutdown /r /t 0 $* & doskey clear=cls'
+        data: 'prompt $E[32m%USERNAME%@%COMPUTERNAME%$E[0m:$E[34m$P$E[0m$_$E(0mq$E(B cmd$G & doskey ls=dir $* & doskey cat=type $* & doskey reboot=shutdown /r /t 0 $* & doskey clear=cls'
         type: string
 
     - name: Install Fantastique Sans Mono
@@ -56,7 +56,8 @@
         return_content: true
       register: nerdfonts_release
 
-    - set_fact:
+    - name: Get download url
+      set_fact:
         dl_url: "{{ nerdfonts_release.json.assets | selectattr('name', 'equalto', 'FantasqueSansMono.zip') | list }}"
 
     - name: Download font
@@ -90,4 +91,4 @@
       loop: "{{ fontfiles.files }}"
       loop_control:
         label: "{{ item.filename }}"
-        
+
