@@ -62,34 +62,32 @@
     - name: Download font
       win_get_url:
         url: "{{ dl_url[0].browser_download_url }}"
-        dest: '%TEMP%\FantasqueSansMono.zip'
+        dest: '{{ ansible_env["TEMP"] }}\FantasqueSansMono.zip'
 
     - name: Extract Fantasque Sans Mono Nerd Font
       win_unzip:
-        src: '%TEMP%\FantasqueSansMono.zip'
-        dest: '%TEMP%\FantasqueSansMonoUnzip'
+        src: '{{ ansible_env["TEMP"] }}\FantasqueSansMono.zip'
+        dest: '{{ ansible_env["TEMP"] }}\FantasqueSansMonoUnzip'
+
+    - name: Find font files
+      win_find:
+        paths: '{{ ansible_env["TEMP"] }}\FantasqueSansMonoUnzip'
+        patterns: [ '*.ttf' ]
+      register: fontfiles
 
     - name: Install font
       win_shell: |
-        $fontSourceFolder = "$env:TEMP\FantasqueSansMonoUnzip"
         $SystemFontsFolder = (New-Object -ComObject Shell.Application).Namespace(0x14)
-        $FontFiles = Get-ChildItem -LiteralPath $fontSourceFolder
-        $SystemFontsPath = $SystemFontsFolder.Self.Path
-
-        foreach ($FontFile in $FontFiles) {
-          # $FontFile will be copied to this path:
-          $targetPath = Join-Path $SystemFontsPath $FontFile.Name
-          # So, see if target exists...
-          if (-not (Test-Path $targetPath)) {
-            #install the font.
-            $SystemFontsFolder.CopyHere($FontFile.fullname)
-            Write-Output "change made: $($FontFile.Name)"
-          }
+        $targetPath = Join-Path "${env:LocalAppData}\Microsoft\Windows\Fonts" '{{ item.filename }}'
+        # So, see if target exists...
+        if (-not (Test-Path $targetPath)) {
+          #install the font.
+          $SystemFontsFolder.CopyHere('{{ item.path }}')
+          Write-Output "change made"
         }
       register: _fontinstall_command
-      changed_when: "'change made' in _fontinstall_command"
-
-    - name: debug print installed fonts
-      debug:
-        var: _fontinstall_command
+      changed_when: "'change made' in _fontinstall_command.stdout"
+      loop: "{{ fontfiles.files }}"
+      loop_control:
+        label: "{{ item.filename }}"
         
