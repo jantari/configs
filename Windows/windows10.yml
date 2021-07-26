@@ -29,10 +29,6 @@
         data: 'prompt $E[32m%USERNAME%@%COMPUTERNAME%$E[0m:$E[34m$P$E[0m$_$E(0mq$E(B cmd$G & doskey ls=dir $* & doskey cat=type $* & doskey reboot=shutdown /r /t 0 $* & doskey clear=cls'
         type: string
 
-    - name: Install Fantastique Sans Mono
-      debug:
-        msg: "Don't forget!"
-
     - name: Copy neovim configuration
       win_copy:
         src: files/init.vim
