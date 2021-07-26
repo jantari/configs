@@ -3,6 +3,7 @@
 - name: Configuring Windows 10
   hosts: all
   vars:
+    ansible_shell_type: cmd
   tasks:
     - name: Install neovim
       win_chocolatey:
@@ -61,10 +62,34 @@
     - name: Download font
       win_get_url:
         url: "{{ dl_url[0].browser_download_url }}"
-        dest: "%USERPROFILE%/FantasqueSansMono.zip"
+        dest: '%TEMP%\FantasqueSansMono.zip'
 
-    - name: Download and extract Fantasque Sans Mono Nerd Font
+    - name: Extract Fantasque Sans Mono Nerd Font
       win_unzip:
-        src: "%USERPROFILE%/FantasqueSansMono.zip"
-        dest: "%USERPROFILE%/FantasqueSansMonoUnzip"
+        src: '%TEMP%\FantasqueSansMono.zip'
+        dest: '%TEMP%\FantasqueSansMonoUnzip'
 
+    - name: Install font
+      win_shell: |
+        $fontSourceFolder = "$env:TEMP\FantasqueSansMonoUnzip"
+        $SystemFontsFolder = (New-Object -ComObject Shell.Application).Namespace(0x14)
+        $FontFiles = Get-ChildItem -LiteralPath $fontSourceFolder
+        $SystemFontsPath = $SystemFontsFolder.Self.Path
+
+        foreach ($FontFile in $FontFiles) {
+          # $FontFile will be copied to this path:
+          $targetPath = Join-Path $SystemFontsPath $FontFile.Name
+          # So, see if target exists...
+          if (-not (Test-Path $targetPath)) {
+            #install the font.
+            $SystemFontsFolder.CopyHere($FontFile.fullname)
+            Write-Output "change made: $($FontFile.Name)"
+          }
+        }
+      register: _fontinstall_command
+      changed_when: "'change made' in _fontinstall_command"
+
+    - name: debug print installed fonts
+      debug:
+        var: _fontinstall_command
+        
