@@ -4,6 +4,9 @@
   hosts: all
   vars:
     ansible_shell_type: cmd
+    nerdfonts_to_install:
+      - FantasqueSansMono.zip
+      - FiraCode.zip
   tasks:
     - name: Install neovim
       win_chocolatey:
@@ -52,30 +55,36 @@
         return_content: true
       register: nerdfonts_release
 
-    - name: Get download url
+    - name: Get font download URLs
       set_fact:
-        dl_url: "{{ nerdfonts_release.json.assets | selectattr('name', 'equalto', 'FantasqueSansMono.zip') | list }}"
+        font_dl_urls: "{{ font_dl_urls | default([]) + nerdfonts_release.json.assets | selectattr('name', 'equalto', item) }}"
+      loop: '{{ nerdfonts_to_install }}'
 
-    - name: Download font
+    - name: Download fonts
       win_get_url:
-        url: "{{ dl_url[0].browser_download_url }}"
-        dest: '{{ ansible_env["TEMP"] }}\FantasqueSansMono.zip'
+        url: "{{ item.browser_download_url }}"
+        dest: '{{ ansible_env["TEMP"] }}\{{ item.name }}'
+      loop: '{{ font_dl_urls }}'
+      throttle: 1
 
     - name: Extract Fantasque Sans Mono Nerd Font
       win_unzip:
-        src: '{{ ansible_env["TEMP"] }}\FantasqueSansMono.zip'
-        dest: '{{ ansible_env["TEMP"] }}\FantasqueSansMonoUnzip'
+        src: '{{ ansible_env["TEMP"] }}\{{ item.name }}'
+        dest: '{{ ansible_env["TEMP"] }}\{{ item.name }}-unzip'
+        creates: '{{ ansible_env["TEMP"] }}\{{ item.name }}-unzip'
+      loop: '{{ font_dl_urls }}'
 
     - name: Find font files
       win_find:
-        paths: '{{ ansible_env["TEMP"] }}\FantasqueSansMonoUnzip'
+        paths: '{{ ansible_env["TEMP"] }}\{{ item.name }}-unzip'
         patterns: [ '*.ttf' ]
+      loop: '{{ font_dl_urls }}'
       register: fontfiles
 
     - name: Install font
       win_shell: |
         $SystemFontsFolder = (New-Object -ComObject Shell.Application).Namespace(0x14)
-        $targetPath = Join-Path "${env:LocalAppData}\Microsoft\Windows\Fonts" '{{ item.filename }}'
+        $targetPath = Join-Path "${env:LocalAppData}\Microsoft\Windows\Fonts" -ChildPath '{{ item.filename }}'
         # So, see if target exists...
         if (-not (Test-Path $targetPath)) {
           #install the font.
@@ -84,7 +93,7 @@
         }
       register: _fontinstall_command
       changed_when: "'change made' in _fontinstall_command.stdout"
-      loop: "{{ fontfiles.files }}"
+      loop: "{{ fontfiles.results | map(attribute='files') | flatten }}"
       loop_control:
         label: "{{ item.filename }}"
 
