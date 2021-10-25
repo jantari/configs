@@ -128,4 +128,6 @@ let g:completion_chain_complete_list = [
 let g:nvim_tree_auto_close = 1
 let g:nvim_tree_git_hl = 1
 let g:nvim_tree_highlight_opened_files = 1
+let g:nvim_tree_indent_markers = 1
+let g:nvim_tree_ignore = [ '.git', 'node_modules', '.cache' ]
 
