@@ -84,6 +84,9 @@ let g:lightline = {
 
 " Configure Indent-Guide
 let g:indentLine_char = '▏'
+" Disable conceal of backtick codeblocks inside Markdown files,
+" see: https://vi.stackexchange.com/questions/7258/how-do-i-prevent-vim-from-hiding-symbols-in-markdown-and-json/19974#19974
+let g:indentLine_fileTypeExclude = ['markdown']
 
 " Open NERDTree with Ctrl + B
 map <C-b> :NERDTreeToggle<CR>
