@@ -53,15 +53,16 @@ Plug 'tomasiser/vim-code-dark'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'lewis6991/gitsigns.nvim', {'branch': 'main'}
 Plug 'rhysd/git-messenger.vim'
-
-" LSP stuff:
+Plug 'akinsho/toggleterm.nvim', {'tag': 'v2.*'}
+Plug 'numToStr/Comment.nvim'
+" LSP stuff
 Plug 'neovim/nvim-lspconfig'
 Plug 'williamboman/nvim-lsp-installer'
-
-" Completion stuff:
+" Completion stuff
 Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-buffer'
+" nvim-cmp REQUIRES a snippet plugin
 Plug 'L3MON4D3/LuaSnip'
 Plug 'saadparwaiz1/cmp_luasnip'
 call plug#end()
@@ -84,6 +85,7 @@ highlight LineNR guibg=None guifg=#8c8c8c
 highlight! def link Comment NonText
 highlight EndOfBuffer guibg=None
 highlight! Directory guibg=None
+hi String gui=NONE cterm=NONE
 
 " Render invisible characters
 set list
@@ -99,11 +101,17 @@ let g:lightline = {
 " Configure Indent-Guide
 let g:indentLine_char = '▏'
 let g:indent_blankline_show_first_indent_level = v:false
+" Disable conceal of backtick codeblocks inside Markdown files,
+" see: https://vi.stackexchange.com/questions/7258/how-do-i-prevent-vim-from-hiding-symbols-in-markdown-and-json/19974#19974
+let g:indentLine_fileTypeExclude = ['markdown']
+
+" Workaround for https://github.com/lukas-reineke/indent-blankline.nvim/issues/59
+set colorcolumn=99999
+:lua require('indent_blankline').setup{}
 
 " Gitsigns configuration
 :lua require('gitsigns').setup{
     \ current_line_blame = true,
-    \ use_decoration_api = true,
     \ signs = {
     \   add = { text ='+' },
     \   delete = { text = '-' },
@@ -112,6 +120,20 @@ let g:indent_blankline_show_first_indent_level = v:false
     \ numhl = false,
     \ linehl = false,
     \ }
+
+"set shell=powershell
+let &shell = has('win32') ? 'powershell' : 'pwsh'
+let &shellcmdflag = '-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;'
+let &shellredir = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
+let &shellpipe = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
+set shellquote= shellxquote=
+:lua require("toggleterm").setup{}
+
+" Make ESC work in terminals to go to normal mode
+tnoremap <Esc> <C-\><C-n>
+" Use F8 to send lines to the terminal (like in ISE, not that I ever used it)
+nnoremap <F8> :ToggleTermSendCurrentLine<CR>
+vnoremap <F8> :ToggleTermSendVisualLines<CR>
 
 " Show git popup / history with Ctrl + g
 nnoremap <C-g> :GitMessenger<CR>
@@ -151,16 +173,61 @@ lua <<EOF
     -- vim.cmd [[ command! Format execute 'lua vim.lsp.buf.formatting()' ]]
   end
 
+  local kind_icons = {
+    Text = "",
+    Method = "",
+    Function = "",
+    Constructor = "",
+    Field = "",
+    --Variable = "",
+    --Variable = "",
+    Variable = "",
+    Class = "ﴯ",
+    Interface = "",
+    Module = "",
+    Property = "ﰠ",
+    Unit = "",
+    Value = "",
+    Enum = "",
+    Keyword = "",
+    Snippet = "",
+    Color = "",
+    File = "",
+    Reference = "",
+    Folder = "",
+    EnumMember = "",
+    Constant = "",
+    Struct = "",
+    Event = "",
+    Operator = "",
+    TypeParameter = ""
+  }
+
   cmp.setup{
     snippet = {
       expand = function(args)
         require('luasnip').lsp_expand(args.body)
       end,
     },
+    formatting = {
+      format = function(entry, vim_item)
+        -- Kind icons
+        vim_item.kind = string.format('%s', kind_icons[vim_item.kind]) -- only showthe icon, not the kind text
+        -- Source
+        vim_item.menu = ({
+          buffer = "📜",
+          nvim_lsp = "💡",
+          luasnip = "[LuaSnip]",
+          nvim_lua = "[Lua]",
+          latex_symbols = "[LaTeX]",
+        })[entry.source.name]
+        return vim_item
+      end
+    },
     sources = {
       { name = 'nvim_lsp' },
       { name = 'luasnip' },
-      { name = 'buffer' },
+      { name = 'buffer', keyword_length = 4, max_item_count = 10 },
     },
     preselect = cmp.PreselectMode.None,
     mapping = {
@@ -206,15 +273,32 @@ lua <<EOF
   }
 EOF
 
-" Nvimtree configuration
-let g:nvim_tree_git_hl = 1
-let g:nvim_tree_highlight_opened_files = 1
-let g:nvim_tree_indent_markers = 1
+" Load Comment.nvim
+lua require('Comment').setup()
 
+" Nvimtree configuration
 :lua require('nvim-tree').setup{
-  \   auto_close = true,
+  \   filters = {
+  \     custom = { '.git', 'node_modules', '.cache' },
+  \   },
   \   update_focused_file = {
   \     enable = true
-  \   }
+  \   },
+  \   git = {
+  \     enable = true,
+  \     ignore = true,
+  \     timeout = 400,
+  \   },
+  \   view = {
+  \     width = 32
+  \   },
+  \   renderer = {
+  \     highlight_git = true,
+  \     indent_markers = {
+  \       enable = false,
+  \     },
+  \   },
   \ }
+
+" autocmd BufEnter * ++nested if winnr('$') == 1 && bufname() == 'NvimTree_' . tabpagenr() | quit | endif
 
