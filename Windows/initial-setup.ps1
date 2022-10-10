@@ -3,6 +3,9 @@ if (-not (Get-Command scoop -ErrorAction Ignore)) {
     Invoke-RestMethod get.scoop.sh | Invoke-Expression
 }
 
+# Install git first because scoop uses it to self-update
+scoop install git
+
 scoop bucket add extras
 scoop update
 
@@ -10,7 +13,6 @@ $ScoopPackages = @(
     'starship',
     'neovim',
     'jq',
-    'git',
     'delta',
     'tokei',
     'sed',
