@@ -19,6 +19,10 @@ set ignorecase
 " Copy to system clipboard with Ctrl-C
 vnoremap <C-c> "+y
 
+" Insert current timestamp with F5 like notepad
+" Idea from https://github.com/shaneis/PSTimesheets
+inoremap <F5> <C-R>=strftime('%d.%m.%Y %H:%M')<CR>
+
 " Set to auto read when a file is changed from the outside
 set autoread
 
