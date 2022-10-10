@@ -4,6 +4,7 @@ if (-not (Get-Command scoop -ErrorAction Ignore)) {
 }
 
 scoop bucket add extras
+scoop update
 
 $ScoopPackages = @(
     'starship',
