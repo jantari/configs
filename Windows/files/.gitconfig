@@ -2,22 +2,32 @@
 # Requires delta: https://github.com/dandavison/delta
 
 [user]
-# Please adapt and uncomment the following lines:
     name = jantari
     email = jantari@github.com
 
 [core]
-    pager = delta
     # -blank-at-eof stops empty trailing lines being marked as errors,
     # cr-at-eol prevents CRLF line endings from being highlighted as ^M errors in diffs
     whitespace = blank-at-eol, -blank-at-eof, space-before-tab, cr-at-eol
 
+[pager]
+    diff = delta --paging=never
+    log = delta
+    reflog = delta
+    show = delta --paging=never
+    blame = delta
+
 [interactive]
-    diffFilter = delta --color-only
+    diffFilter = delta --color-only --features=interactive
+
+[merge]
+    # Show changes from both branches next to their
+    # common base which makes some merge conflicts clearer
+    conflictStyle = zdiff3 # Requires git 2.35+
 
 [delta]
     features = line-numbers decorations
-    whitespace-error-style = 22 reverse
+    #whitespace-error-style = 22 reverse
     #syntax-theme = Dracula
 
 [delta "decorations"]
@@ -27,7 +37,11 @@
     hunk-header-style = omit
 
 [filter "lfs"]
-    clean = git-lfs clean -- %f
-    smudge = git-lfs smudge -- %f
-    process = git-lfs filter-process
     required = true
+
+[credential]
+    helper = manager-core
+
+[credential "helperselector"]
+    selected = manager-core
+
