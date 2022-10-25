@@ -1,4 +1,5 @@
 ﻿Set-PSReadLineKeyHandler -Key Tab -Function Complete
+Set-PSReadLineKeyHandler -Chord 'Alt+F4' -ScriptBlock { Write-Host "Exiting ..."; [Environment]::Exit(0) }
 Set-PSReadLineOption -PredictionSource History
 
 if ($PSStyle) {
