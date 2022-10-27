@@ -7,4 +7,7 @@
   get_url:
     url: https://raw.githubusercontent.com/arcticicestudio/nord-xfce-terminal/develop/src/nord.theme
     dest: ~/.config/xfce4/terminal/colorschemes
-    
+
+- name: Enable Super+Number shortcuts on PopOS dock
+  command: "gsettings set org.gnome.shell.extensions.dash-to-dock hot-keys true"
+
