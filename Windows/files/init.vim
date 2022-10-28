@@ -61,7 +61,8 @@ Plug 'akinsho/toggleterm.nvim', {'tag': 'v2.*'}
 Plug 'numToStr/Comment.nvim'
 " LSP stuff
 Plug 'neovim/nvim-lspconfig'
-Plug 'williamboman/nvim-lsp-installer'
+Plug 'williamboman/mason.nvim'
+Plug 'williamboman/mason-lspconfig.nvim'
 " Completion stuff
 Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/cmp-nvim-lsp'
@@ -124,6 +125,9 @@ set colorcolumn=99999
     \ numhl = false,
     \ linehl = false,
     \ }
+
+:lua require("mason").setup{}
+:lua require("mason-lspconfig").setup{}
 
 "set shell=powershell
 let &shell = has('win32') ? 'powershell' : 'pwsh'
@@ -267,7 +271,8 @@ lua <<EOF
   }
 
   -- Setup lspconfig.
-  local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+  --local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+  local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
 
   require('lspconfig').powershell_es.setup{
     filetypes = {"ps1", "psm1", "psd1"},
@@ -275,10 +280,16 @@ lua <<EOF
     capabilities = capabilities,
     bundle_path = '~/AppData/Local/nvim-data/lsp_servers/powershell_es',
   }
+
+  require('lspconfig').gopls.setup{
+    filetypes = {"go"},
+    on_attach = on_attach,
+    capabilities = capabilities,
+  }
 EOF
 
 " Load Comment.nvim
-lua require('Comment').setup()
+:lua require('Comment').setup()
 
 " Nvimtree configuration
 :lua require('nvim-tree').setup{
