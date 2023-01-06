@@ -1,4 +1,3 @@
-
 -- disable netrw at the very start of your init.lua (strongly advised)
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
@@ -21,7 +20,7 @@ vim.opt.ignorecase = true
 
 vim.opt.termguicolors = true
 
--- Keep 4 lines on screen ahead of the cursor
+-- Keep 5 lines on screen ahead of the cursor
 vim.o.scrolloff = 5
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -41,7 +40,8 @@ require("lazy").setup({
   'sheerun/vim-polyglot',
   { 'lewis6991/gitsigns.nvim', branch = 'main'},
   'nvim-lualine/lualine.nvim',
-  'tomasiser/vim-code-dark',
+  'Mofiqul/vscode.nvim',
+  { 'nvim-treesitter/nvim-treesitter', build = ':TSUpdate'},
   'lukas-reineke/indent-blankline.nvim',
   'kyazdani42/nvim-tree.lua',
   -- LSP Stuff
@@ -51,13 +51,14 @@ require("lazy").setup({
   -- Completion stuff
   'hrsh7th/nvim-cmp',
   'hrsh7th/cmp-nvim-lsp',
+  'hrsh7th/cmp-nvim-lsp-signature-help',
   'hrsh7th/cmp-buffer',
   -- nvim-cmp REQUIRES a snippet plugin
   'L3MON4D3/LuaSnip',
   'saadparwaiz1/cmp_luasnip',
 })
 
-vim.cmd 'colorscheme codedark'
+--vim.cmd 'colorscheme codedark'
 
 -- Highlight current line
 vim.api.nvim_set_hl(0, 'CursorLine', {})
@@ -66,14 +67,18 @@ vim.api.nvim_set_hl(0, 'CursorLineNr', {cterm=inverse, fg=inverse})
 -- Render invisible characters
 vim.opt.list = true
 vim.opt.listchars = {tab='→ ', nbsp='␣', trail='·', eol='↲'}
---vim.api.nvim_set_hl(0, 'NonText', {fg = 'black', bg='NONE'})
-vim.cmd 'highlight NonText ctermfg=0 guibg=None'
+
+require('vscode').setup({
+  transparent = true,
+  italic_comments = true,
+})
 
 -- lualine configurations
 vim.o.showmode = false
 require('lualine').setup{
   options = {
-    theme = 'onedark',
+    --theme = 'onedark',
+    theme = 'vscode',
     section_separators = { left = '', right = '' },
     component_separators = { left = '', right = '' },
   },
@@ -94,23 +99,26 @@ require('lualine').setup{
   }
 }
 
+-- Override parts of the vscode theme
 -- No fat background highlight on split divider
-vim.api.nvim_set_hl(0, 'VertSplit', {ctermbg='NONE', bg='NONE'})
+--vim.api.nvim_set_hl(0, 'VertSplit', {ctermbg='NONE', bg='NONE'})
+--vim.api.nvim_set_hl(0, 'Comment', {link = 'NonText'})
 
--- Override parts of the theme. Particularly the background
--- so that the terminals background is seen through instead.
-vim.api.nvim_set_hl(0, 'Normal', {ctermbg='NONE', bg='NONE'})
-vim.api.nvim_set_hl(0, 'LineNR', {bg='NONE', fg="#8c8c8c"})
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = { "go" },
+  auto_install = false,
 
-vim.api.nvim_set_hl(0, 'Comment', {link = 'NonText'})
-vim.api.nvim_set_hl(0, 'EndOfBuffer', {bg='NONE'})
-vim.api.nvim_set_hl(0, 'String', {fg = 'NONE'})
+  highlight = {
+    enable = true,
+    disable = { "lua" },
+  }
+}
 
 -- Configure Indent-Guide
 require("indent_blankline").setup {
     -- for example, context is off by default, use this to turn it on
     show_first_indent_level = false,
-    --show_current_context = true,
+    show_current_context = true,
     --show_current_context_start = true,
     char = '▏',
     filetype_exclude = {
@@ -118,23 +126,62 @@ require("indent_blankline").setup {
     },
 }
 
+-- nvim-cmp supports additional completion capabilities, so broadcast that to servers
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
 require("mason").setup{}
 require("mason-lspconfig").setup{}
 
-require('lspconfig').gopls.setup{}
+require('lspconfig').gopls.setup{
+  capabilities = capabilities,
+}
 
 require('lspconfig').powershell_es.setup{
-    filetypes = {"ps1", "psm1", "psd1"},
-    bundle_path = '~/AppData/Local/nvim-data/lsp_servers/powershell_es',
+  filetypes = {"ps1", "psm1", "psd1"},
+  bundle_path = '~/AppData/Local/nvim-data/lsp_servers/powershell_es',
+  capabilities = capabilities,
 }
 
 -- Open/Close NvimTree with Ctrl + B
 vim.keymap.set({'n', 'i', 'v'}, '<C-b>', ':NvimTreeToggle<CR>')
 
+vim.keymap.set({'v'}, '<C-c>', '"+y')
+
 -- Completion setup
 vim.o.completeopt = 'menu,menuone,noselect'
 
 -- Set up nvim-cmp.
+local kind_icons = {
+  Text = "",
+  Method = "",
+  Function = "",
+  Constructor = "",
+  Field = "",
+  --Variable = "",
+  --Variable = "",
+  Variable = "",
+  Class = "ﴯ",
+  Interface = "",
+  Module = "",
+  Property = "ﰠ",
+  Unit = "",
+  Value = "",
+  Enum = "",
+  Keyword = "",
+  Snippet = "",
+  Color = "",
+  File = "",
+  Reference = "",
+  Folder = "",
+  EnumMember = "",
+  Constant = "",
+  Struct = "",
+  Event = "",
+  Operator = "",
+  TypeParameter = ""
+}
+
+local luasnip = require 'luasnip'
 local cmp = require'cmp'
 
 cmp.setup({
@@ -144,8 +191,24 @@ cmp.setup({
       require('luasnip').lsp_expand(args.body)
     end,
   },
+  formatting = {
+    format = function(entry, vim_item)
+      -- Kind icons
+      vim_item.kind = string.format('%s', kind_icons[vim_item.kind]) -- only showthe icon, not the kind text
+      -- Source
+      vim_item.menu = ({
+        buffer = "📜",
+        nvim_lsp = "💡",
+        luasnip = "[LuaSnip]",
+        nvim_lua = "[Lua]",
+        latex_symbols = "[LaTeX]",
+      })[entry.source.name]
+      return vim_item
+    end
+  },
   sources = {
     { name = 'nvim_lsp' },
+    { name = 'nvim_lsp_signature_help' },
     { name = 'luasnip' },
     { name = 'buffer', keyword_length = 4, max_item_count = 10 },
   },
