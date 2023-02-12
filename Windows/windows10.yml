@@ -17,8 +17,12 @@
 
     - name: Install software
       win_chocolatey:
+        name: git
+        package_params: '/GitOnlyOnPath /WindowsTerminal /NoShellIntegration /NoCredentialManager /SChannel'
+
+    - name: Install software
+      win_chocolatey:
         name:
-        - git
         - delta
         - sed
         - 7zip
