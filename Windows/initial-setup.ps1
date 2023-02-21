@@ -1,9 +1,16 @@
-﻿# Install some software as non-portable versions
+﻿# Configure preferred ExecutionPolicy.
+# Switching from Unrestricted is also required for the scoop setup.
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+
+# Install some software as non-portable versions
 @(
     '7zip.7zip',
     'SumatraPDF.SumatraPDF',
     'VideoLAN.VLC',
-    'Mozilla.Firefox'
+    'Mozilla.Firefox',
+    'KeePassXCTeam.KeePassXC',
+    'Microsoft.PowerShell',
+    'Microsoft.PowerShell.Preview'
 ) | ForEach-Object {
     winget install --source winget --id "$_" --scope machine --silent
 }
@@ -32,6 +39,13 @@ $ScoopPackages = @(
 )
 
 scoop install @ScoopPackages
+
+if (-not (Test-Path -LiteralPath $PROFILE)) { New-Item -Path $PROFILE -ItemType File -Force }
+
+if (-not ((Get-Content -LiteralPath $PROFILE -ErrorAction Ignore) -like '*starship init powershell*')) {
+    Add-Content -LiteralPath $PROFILE -Value 'Invoke-Expression (&starship init powershell)' -Force
+    . $PROFILE
+}
 
 # Install Windows Terminal Preview from Microsoft Store
 winget install --source msstore --id "9N8G5RFZ9XK3" --accept-source-agreements --accept-package-agreements --silent
