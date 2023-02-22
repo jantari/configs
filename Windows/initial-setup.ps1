@@ -40,6 +40,24 @@ $ScoopPackages = @(
 
 scoop install @ScoopPackages
 
+# Font
+# --tls-max 1.2 is a workaround for this bug: https://github.com/curl/curl/issues/9431
+# until windows ships with a version of curl in the box that includes: https://github.com/curl/curl/commit/12e1def51a75392df62e65490416007d7e68dab9
+$CurlArgs = @(
+    '--fail',
+    '--location' # Follow redirects
+    '--tls-max', '1.2',
+    "https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/FantasqueSansMono/Regular/complete/Fantasque%20Sans%20Mono%20Regular%20Nerd%20Font%20Complete%20Windows%20Compatible.ttf",
+    '--output',
+    "$env:TEMP\FantasqueSansMono.ttf"
+)
+curl.exe @CurlArgs
+(New-Object -ComObject Shell.Application).Namespace(0x14).CopyHere("$env:TEMP\FantasqueSansMono.ttf", 0x14);
+reg.exe add "HKCU\Console" /v FaceName /t REG_SZ /d "FantasqueSansMono NF" /f
+reg.exe add "HKCU\Console" /v FontFamily /t REG_DWORD /d 0x36 /f
+reg.exe add "HKCU\Console" /v FontSize /t REG_DWORD /d 0x100000 /f
+reg.exe add "HKCU\Console" /v FontWeight /t REG_DWORD /d 0x190 /f
+
 if (-not (Test-Path -LiteralPath $PROFILE)) { New-Item -Path $PROFILE -ItemType File -Force }
 
 if (-not ((Get-Content -LiteralPath $PROFILE -ErrorAction Ignore) -like '*starship init powershell*')) {
