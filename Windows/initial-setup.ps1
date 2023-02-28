@@ -68,6 +68,10 @@ if (-not ((Get-Content -LiteralPath $PROFILE -ErrorAction Ignore) -like '*starsh
 # Install Windows Terminal Preview from Microsoft Store
 winget install --source msstore --id "9N8G5RFZ9XK3" --accept-source-agreements --accept-package-agreements --silent
 
+# Settings
+## Disable Windows 11 SnapLayout overlay on maximize button
+reg.exe add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v EnableSnapAssistFlyout /t REG_DWORD /d 0 /f
+
 # Begin As Administrator
 #
 # Set up WSL2
