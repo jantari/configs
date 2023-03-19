@@ -6,14 +6,23 @@ vim.wo.number = true
 vim.opt.background = 'dark'
 
 -- Turn off backup and swapfiles
-vim.o.nobackup = true
-vim.o.nowritebackup = true
-vim.o.noswapfile = true
+vim.opt.backup = false
+vim.opt.writebackup = false
+vim.opt.swapfile = false
 
 -- 4 spaces instead of Tab
-vim.o.expandtab = true
-vim.o.shiftwidth = 4
-vim.o.tabstop = 4
+vim.opt.expandtab = true
+vim.opt.shiftwidth = 4
+vim.opt.tabstop = 4
+
+-- 2 spaces for lua and yaml files
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = {"lua", "yaml"},
+  callback = function()
+    vim.opt_local.shiftwidth = 2
+    vim.opt_local.tabstop = 2
+  end
+})
 
 vim.wo.cursorline = true
 vim.opt.ignorecase = true
@@ -36,48 +45,24 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.runtimepath:prepend(lazypath)
 
-require("lazy").setup({
-  'sheerun/vim-polyglot',
-  { 'lewis6991/gitsigns.nvim', branch = 'main'},
-  'nvim-lualine/lualine.nvim',
-  'Mofiqul/vscode.nvim',
-  { 'nvim-treesitter/nvim-treesitter', build = ':TSUpdate'},
-  'lukas-reineke/indent-blankline.nvim',
-  'kyazdani42/nvim-tree.lua',
-  -- LSP Stuff
-  'williamboman/mason.nvim',
-  'williamboman/mason-lspconfig.nvim',
-  'neovim/nvim-lspconfig',
-  -- Completion stuff
-  'hrsh7th/nvim-cmp',
-  'hrsh7th/cmp-nvim-lsp',
-  'hrsh7th/cmp-nvim-lsp-signature-help',
-  'hrsh7th/cmp-buffer',
-  -- nvim-cmp REQUIRES a snippet plugin
-  'L3MON4D3/LuaSnip',
-  'saadparwaiz1/cmp_luasnip',
-})
-
---vim.cmd 'colorscheme codedark'
-
 -- Highlight current line
 vim.api.nvim_set_hl(0, 'CursorLine', {})
 vim.api.nvim_set_hl(0, 'CursorLineNr', {cterm=inverse, fg=inverse})
+vim.api.nvim_set_hl(0, 'NvimTreeNormal', {link = 'StatusLineNC'})
+
+require('plugins')
 
 -- Render invisible characters
 vim.opt.list = true
 vim.opt.listchars = {tab='→ ', nbsp='␣', trail='·', eol='↲'}
 
-require('vscode').setup({
-  transparent = true,
-  italic_comments = true,
-})
+-- Do not use any text character in vertical split separator
+vim.opt.fillchars:append("vert: ")
 
 -- lualine configurations
 vim.o.showmode = false
 require('lualine').setup{
   options = {
-    --theme = 'onedark',
     theme = 'vscode',
     section_separators = { left = '', right = '' },
     component_separators = { left = '', right = '' },
@@ -105,11 +90,13 @@ require('lualine').setup{
 --vim.api.nvim_set_hl(0, 'Comment', {link = 'NonText'})
 
 require'nvim-treesitter.configs'.setup {
-  ensure_installed = { "go" },
+  ensure_installed = { "go", "python", "dockerfile" },
+  sync_install = false,
   auto_install = false,
 
   highlight = {
     enable = true,
+    use_languagetree = true,
     disable = { "lua" },
   }
 }
@@ -145,6 +132,7 @@ require('lspconfig').powershell_es.setup{
 -- Open/Close NvimTree with Ctrl + B
 vim.keymap.set({'n', 'i', 'v'}, '<C-b>', ':NvimTreeToggle<CR>')
 
+-- Yank to system clipboard with Ctrl-C
 vim.keymap.set({'v'}, '<C-c>', '"+y')
 
 -- Completion setup
@@ -268,16 +256,3 @@ require('nvim-tree').setup{
     },
   },
 }
-
--- Gitsigns configuration
-require('gitsigns').setup{
-  current_line_blame = true,
-  signs = {
-    add = { text ='+' },
-    delete = { text = '-' },
-    change = { text = '±' },
-  },
-  numhl = false,
-  linehl = false,
-}
-
