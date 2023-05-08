@@ -28,82 +28,34 @@ require("lazy").setup({
           change = { hl = "DiffChange", text = "±", numhl = "GitSignsChangeNr" },
         },
         numhl = false,
-        linehl = true,
+        linehl = false,
       }
     end,
+  },
+  {
+    'rhysd/git-messenger.vim',
   },
   { 'nvim-lualine/lualine.nvim', lazy = true },
   { 'nvim-treesitter/nvim-treesitter', build = ':TSUpdate'},
   'lukas-reineke/indent-blankline.nvim',
   { 'kyazdani42/nvim-tree.lua', lazy = true },
   {
-    'akinsho/bufferline.nvim',
-    lazy = false,
-    version = "3.x",
-    dependencies = { 'nvim-tree/nvim-web-devicons', },
-    config = function()
-      require("bufferline").setup{
-        options = {
-          tab_size = 22,
-          offsets = {
-            {
-              filetype = "NvimTree",
-              separator = " ", -- use a "true" to enable the default, or set your own character
-            }
-          },
-          diagnostics = "nvim_lsp",
-          separator_style = {"", ""},
-        },
-        highlights = {
-          background = {
-              fg = { attribute = "fg", highlight = "Normal" },
-              bg = { attribute = "bg", highlight = "StatusLine" },
-          },
-          buffer_visible = {
-              fg = { attribute = "fg", highlight = "Normal" },
-              bg = { attribute = "bg", highlight = "Normal" },
-          },
-          buffer_selected = {
-              fg = { attribute = "fg", highlight = "Normal" },
-              bg = { attribute = "bg", highlight = "Normal" },
-              bold = true,
-              italic = false,
-          },
-          duplicate = {
-            fg = { attribute = "fg", highlight = "Normal" },
-            bg = { attribute = "bg", highlight = "StatusLine" },
-            italic = false,
-          },
-          duplicate_selected = {
-            fg = { attribute = "fg", highlight = "Normal" },
-            bg = { attribute = "bg", highlight = "Normal" },
-            bold = false,
-            italic = false,
-          },
-          duplicate_visible = {
-            fg = { attribute = "fg", highlight = "Normal" },
-            bg = { attribute = "bg", highlight = "Normal" },
-            italic = false,
-          },
-          offset_separator = {
-            fg = { attribute = "fg", highlight = "Normal" },
-            bg = { attribute = "bg", highlight = "Normal" },
-          },
-          close_button = {
-              fg = { attribute = "fg", highlight = "Normal" },
-              bg = { attribute = "bg", highlight = "StatusLine" },
-          },
-          close_button_selected = {
-              fg = { attribute = "fg", highlight = "Normal" },
-              bg = { attribute = "bg", highlight = "Normal" },
-          },
-          close_button_visible = {
-              fg = { attribute = "fg", highlight = "Normal" },
-              bg = { attribute = "bg", highlight = "Normal" },
-          },
-        },
-      }
-    end
+    'romgrk/barbar.nvim',
+    dependencies = {
+      'lewis6991/gitsigns.nvim', -- OPTIONAL: for git status
+      'nvim-tree/nvim-web-devicons', -- OPTIONAL: for file icons
+    },
+    init = function() vim.g.barbar_auto_setup = false end,
+    opts = {
+      -- lazy.nvim will automatically call setup for you. put your options here, anything missing will use the default:
+      -- animation = true,
+      -- insert_at_start = true,
+      -- …etc.
+      sidebar_filetypes = {
+        NvimTree = true,
+      },
+    },
+    version = '^1.0.0', -- optional: only update when a new 1.x version is released
   },
   -- LSP Stuff
   { 'williamboman/mason.nvim', lazy = true },

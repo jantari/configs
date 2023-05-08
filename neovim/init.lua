@@ -103,14 +103,14 @@ require'nvim-treesitter.configs'.setup {
 
 -- Configure Indent-Guide
 require("indent_blankline").setup {
-    -- for example, context is off by default, use this to turn it on
-    show_first_indent_level = false,
-    show_current_context = true,
-    --show_current_context_start = true,
-    char = '▏',
-    filetype_exclude = {
-        'markdown'
-    },
+  -- for example, context is off by default, use this to turn it on
+  show_first_indent_level = false,
+  show_current_context = true,
+  --show_current_context_start = true,
+  char = '▏',
+  filetype_exclude = {
+    'markdown'
+  },
 }
 
 -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
@@ -129,11 +129,6 @@ require('lspconfig').powershell_es.setup{
   capabilities = capabilities,
 }
 
--- Open/Close NvimTree with Ctrl + B
-vim.keymap.set({'n', 'i', 'v'}, '<C-b>', ':NvimTreeToggle<CR>')
-
--- Yank to system clipboard with Ctrl-C
-vim.keymap.set({'v'}, '<C-c>', '"+y')
 
 -- Completion setup
 vim.o.completeopt = 'menu,menuone,noselect'
@@ -256,3 +251,19 @@ require('nvim-tree').setup{
     },
   },
 }
+
+-- Open/Close NvimTree with Ctrl + B
+vim.keymap.set({'n', 'i', 'v'}, '<C-b>', ':NvimTreeToggle<CR>')
+
+-- Yank to system clipboard with Ctrl-C
+vim.keymap.set({'v'}, '<C-c>', '"+y')
+
+-- LSP keymappings
+-- Show hover info
+vim.keymap.set({'n'}, 'K', '<cmd>lua vim.lsp.buf.hover()<cr>')
+-- Go to definition
+vim.keymap.set({'n'}, 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>')
+-- Show all references
+vim.keymap.set({'n'}, 'gr', '<cmd>lua vim.lsp.buf.references()<cr>')
+
+vim.g.git_messenger_always_into_popup = true
