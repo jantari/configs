@@ -2,6 +2,19 @@
 
 require("lazy").setup({
   {
+    'projekt0n/github-nvim-theme',
+    lazy = false, -- make sure we load this during startup if it is your main colorscheme
+    priority = 1000, -- make sure to load this before all the other start plugins
+    config = function()
+      require('github-theme').setup({
+        -- ...
+      })
+
+      vim.cmd('colorscheme github_dark')
+    end,
+  },
+  --[[
+  {
     'Mofiqul/vscode.nvim',
     lazy = false,
     priority = 1000,
@@ -13,6 +26,7 @@ require("lazy").setup({
       require('vscode').load()
     end,
   },
+  --]]
   { 'sheerun/vim-polyglot', lazy = true },
   { "nvim-tree/nvim-web-devicons", lazy = true },
   {
@@ -29,13 +43,57 @@ require("lazy").setup({
         },
         numhl = false,
         linehl = false,
+        on_attach = function(bufnr)
+          local gs = package.loaded.gitsigns
+
+          local function map(mode, l, r, opts)
+            opts = opts or {}
+            opts.buffer = bufnr
+            vim.keymap.set(mode, l, r, opts)
+          end
+
+          map('n', '<leader>hr', gs.reset_hunk)
+          map('v', '<leader>hr', function() gs.reset_hunk {vim.fn.line('.'), vim.fn.line('v')} end)
+          map('n', '<leader>hp', gs.preview_hunk)
+        end
       }
-    end,
+    end
   },
   {
     'rhysd/git-messenger.vim',
   },
-  { 'nvim-lualine/lualine.nvim', lazy = true },
+  {
+    'nvim-lualine/lualine.nvim',
+    lazy = false,
+    dependencies = {
+      'nvim-tree/nvim-web-devicons', -- OPTIONAL
+    },
+    config = function()
+      require('lualine').setup{
+        options = {
+          --theme = 'vscode',
+          theme = 'auto',
+          section_separators = { left = '', right = '' },
+          component_separators = { left = '', right = '' },
+        },
+        sections = {
+          lualine_x = {
+            'encoding',
+            {
+              'fileformat',
+              icons_enabled = true,
+              symbols = {
+                unix = 'LF',
+                dos = 'CRLF',
+                mac = 'CR',
+              },
+            },
+            'filetype',
+          }
+        }
+      }
+    end
+  },
   { 'nvim-treesitter/nvim-treesitter', build = ':TSUpdate'},
   'lukas-reineke/indent-blankline.nvim',
   { 'kyazdani42/nvim-tree.lua', lazy = true },

@@ -61,28 +61,6 @@ vim.opt.fillchars:append("vert: ")
 
 -- lualine configurations
 vim.o.showmode = false
-require('lualine').setup{
-  options = {
-    theme = 'vscode',
-    section_separators = { left = '', right = '' },
-    component_separators = { left = '', right = '' },
-  },
-  sections = {
-    lualine_x = {
-      'encoding',
-      {
-        'fileformat',
-        icons_enabled = true,
-        symbols = {
-          unix = 'LF',
-          dos = 'CRLF',
-          mac = 'CR',
-        },
-      },
-      'filetype',
-    }
-  }
-}
 
 -- Override parts of the vscode theme
 -- No fat background highlight on split divider
@@ -251,6 +229,10 @@ require('nvim-tree').setup{
     },
   },
 }
+
+-- Unbind default Shift + Up/Down -> PgUp / PgDown
+vim.keymap.set({'n', 'i', 'v'}, '<S-Up>', '<Up>')
+vim.keymap.set({'n', 'i', 'v'}, '<S-Down>', '<Down>')
 
 -- Open/Close NvimTree with Ctrl + B
 vim.keymap.set({'n', 'i', 'v'}, '<C-b>', ':NvimTreeToggle<CR>')
