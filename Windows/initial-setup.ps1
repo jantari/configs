@@ -35,7 +35,7 @@ $ScoopPackages = @(
     'sed',
     'bottom',
     'bat',
-    'gcc', # Required by one/some of my neovim addons
+    'gcc', # Required by one/some of my neovim plugins
     'gping'
 )
 
@@ -45,8 +45,13 @@ scoop install @ScoopPackages
 scoop cache rm *
 
 if (-not (Test-Path -Path "$env:USERPROFILE\repos")) { mkdir "$env:USERPROFILE\repos" }
+
+# Neovim setup
 if (-not (Test-Path -Path "$env:LOCALAPPDATA\nvim")) { mkdir "$env:LOCALAPPDATA\nvim" }
 if (-not (Test-Path -Path "$env:LOCALAPPDATA\nvim\lua\plugins")) { mkdir "$env:LOCALAPPDATA\nvim\lua\plugins" }
+
+# Restore plugins after neovim config setup (TODO)
+nvim --headless -c "lua require('lazy').restore({wait=true})" -c qa
 
 # Font
 # --tls-max 1.2 is a workaround for this bug: https://github.com/curl/curl/issues/9431
