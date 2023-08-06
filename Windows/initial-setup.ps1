@@ -28,17 +28,25 @@ scoop update
 
 $ScoopPackages = @(
     'starship',
-    'neovim',
+    'neovim', # winget has neovim now, maybe use that?
     'jq',
     'delta',
     'tokei',
     'sed',
     'bottom',
     'bat',
+    'gcc', # Required by one/some of my neovim addons
     'gping'
 )
 
 scoop install @ScoopPackages
+
+# Clean up scoop package cache
+scoop cache rm *
+
+if (-not (Test-Path -Path "$env:USERPROFILE\repos")) { mkdir "$env:USERPROFILE\repos" }
+if (-not (Test-Path -Path "$env:LOCALAPPDATA\nvim")) { mkdir "$env:LOCALAPPDATA\nvim" }
+if (-not (Test-Path -Path "$env:LOCALAPPDATA\nvim\lua\plugins")) { mkdir "$env:LOCALAPPDATA\nvim\lua\plugins" }
 
 # Font
 # --tls-max 1.2 is a workaround for this bug: https://github.com/curl/curl/issues/9431
@@ -47,7 +55,7 @@ $CurlArgs = @(
     '--fail',
     '--location' # Follow redirects
     '--tls-max', '1.2',
-    "https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/FantasqueSansMono/Regular/complete/Fantasque%20Sans%20Mono%20Regular%20Nerd%20Font%20Complete%20Windows%20Compatible.ttf",
+    "https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/FantasqueSansMono/Regular/FantasqueSansMNerdFont-Regular.ttf",
     '--output',
     "$env:TEMP\FantasqueSansMono.ttf"
 )
@@ -58,19 +66,28 @@ reg.exe add "HKCU\Console" /v FontFamily /t REG_DWORD /d 0x36 /f
 reg.exe add "HKCU\Console" /v FontSize /t REG_DWORD /d 0x100000 /f
 reg.exe add "HKCU\Console" /v FontWeight /t REG_DWORD /d 0x190 /f
 
-if (-not (Test-Path -LiteralPath $PROFILE)) { New-Item -Path $PROFILE -ItemType File -Force }
+[string]$Pwsh7Profile = pwsh.exe -NoProfile -NonInteractive -Command '$PROFILE'
+foreach ($ProfileFile in @($PROFILE, $Pwsh7Profile.Trim())) {
+    if (-not (Test-Path -LiteralPath $ProfileFile)) { New-Item -Path $ProfileFile -ItemType File -Force }
 
-if (-not ((Get-Content -LiteralPath $PROFILE -ErrorAction Ignore) -like '*starship init powershell*')) {
-    Add-Content -LiteralPath $PROFILE -Value 'Invoke-Expression (&starship init powershell)' -Force
-    . $PROFILE
+    if (-not ((Get-Content -LiteralPath $ProfileFile -ErrorAction Ignore) -like '*starship init powershell*')) {
+        Add-Content -LiteralPath $ProfileFile -Value 'Invoke-Expression (&starship init powershell)' -Force
+    }
 }
+
+. $PROFILE
 
 # Install Windows Terminal Preview from Microsoft Store
 winget install --source msstore --id "9N8G5RFZ9XK3" --accept-source-agreements --accept-package-agreements --silent
 
 # Settings
+## Dark Theme
+reg.exe add "HKCU\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v SystemUsesLightTheme /t REG_DWORD /d 0 /f
+reg.exe add "HKCU\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v AppsUseLightTheme /t REG_DWORD /d 0 /f
 ## Disable Windows 11 SnapLayout overlay on maximize button
 reg.exe add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v EnableSnapAssistFlyout /t REG_DWORD /d 0 /f
+## Disable Aero Shake
+reg.exe add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v DisallowShaking /t REG_DWORD /d 1 /f
 
 # Begin As Administrator
 #
