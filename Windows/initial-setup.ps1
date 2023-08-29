@@ -45,7 +45,7 @@ do {
     'Microsoft.PowerShell',
     'Microsoft.PowerShell.Preview'
 ) | ForEach-Object {
-    winget install --source winget --id "$_" --scope machine --silent
+    winget install --source winget --id "$_" --scope machine --silent --no-upgrade
 }
 
 # Install scoop
