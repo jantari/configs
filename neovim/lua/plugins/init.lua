@@ -1,5 +1,3 @@
---
-
 require("lazy").setup({
   {
     'projekt0n/github-nvim-theme',
@@ -7,7 +5,16 @@ require("lazy").setup({
     priority = 1000, -- make sure to load this before all the other start plugins
     config = function()
       require('github-theme').setup({
-        -- ...
+        options = {
+          darken = {
+            sidebars = {
+              enabled = true,
+            }
+          },
+          styles = {
+            comments = 'italic',
+          }
+        }
       })
 
       vim.cmd('colorscheme github_dark')
@@ -96,7 +103,39 @@ require("lazy").setup({
   },
   { 'nvim-treesitter/nvim-treesitter', build = ':TSUpdate'},
   'lukas-reineke/indent-blankline.nvim',
-  { 'kyazdani42/nvim-tree.lua', lazy = true },
+  {
+    'nvim-tree/nvim-tree.lua',
+    -- 'kyazdani42/nvim-tree.lua',
+    lazy = false,
+    config = function()
+      -- Nvimtree configuration
+      require('nvim-tree').setup{
+        filters = {
+          custom = { '.git', 'node_modules', '.cache' },
+        },
+        update_focused_file = {
+          enable = true
+        },
+        git = {
+          enable = true,
+          ignore = true,
+          timeout = 400,
+        },
+        view = {
+          width = 32
+        },
+        renderer = {
+          highlight_git = true,
+          indent_markers = {
+            enable = false,
+          },
+        },
+      }
+
+      -- Open/Close NvimTree with Ctrl + B
+      vim.keymap.set({'n', 'i', 'v'}, '<C-b>', ':NvimTreeToggle<CR>')
+    end
+  },
   {
     'romgrk/barbar.nvim',
     dependencies = {
@@ -109,6 +148,11 @@ require("lazy").setup({
       -- animation = true,
       -- insert_at_start = true,
       -- …etc.
+      icons = {
+        inactive = {separator = {left = '▏', right = ''}},
+        separator = {left = '▏', right = ''},
+        separator_at_end = false,
+      },
       sidebar_filetypes = {
         NvimTree = true,
       },

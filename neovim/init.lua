@@ -48,7 +48,7 @@ vim.opt.runtimepath:prepend(lazypath)
 -- Highlight current line
 vim.api.nvim_set_hl(0, 'CursorLine', {})
 vim.api.nvim_set_hl(0, 'CursorLineNr', {cterm=inverse, fg=inverse})
-vim.api.nvim_set_hl(0, 'NvimTreeNormal', {link = 'StatusLineNC'})
+--vim.api.nvim_set_hl(0, 'NvimTreeNormal', {link = 'StatusLineNC'})
 
 require('plugins')
 
@@ -206,36 +206,9 @@ cmp.setup({
   },
 })
 
--- Nvimtree configuration
-require('nvim-tree').setup{
-  filters = {
-    custom = { '.git', 'node_modules', '.cache' },
-  },
-  update_focused_file = {
-    enable = true
-  },
-  git = {
-    enable = true,
-    ignore = true,
-    timeout = 400,
-  },
-  view = {
-    width = 32
-  },
-  renderer = {
-    highlight_git = true,
-    indent_markers = {
-      enable = false,
-    },
-  },
-}
-
 -- Unbind default Shift + Up/Down -> PgUp / PgDown
 vim.keymap.set({'n', 'i', 'v'}, '<S-Up>', '<Up>')
 vim.keymap.set({'n', 'i', 'v'}, '<S-Down>', '<Down>')
-
--- Open/Close NvimTree with Ctrl + B
-vim.keymap.set({'n', 'i', 'v'}, '<C-b>', ':NvimTreeToggle<CR>')
 
 -- Yank to system clipboard with Ctrl-C
 vim.keymap.set({'v'}, '<C-c>', '"+y')
