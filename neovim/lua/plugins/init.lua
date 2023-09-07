@@ -122,7 +122,7 @@ require("lazy").setup({
           timeout = 400,
         },
         view = {
-          width = 32
+          width = 42
         },
         renderer = {
           highlight_git = true,
