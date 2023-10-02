@@ -79,18 +79,6 @@ require'nvim-treesitter.configs'.setup {
   }
 }
 
--- Configure Indent-Guide
-require("indent_blankline").setup {
-  -- for example, context is off by default, use this to turn it on
-  show_first_indent_level = false,
-  show_current_context = true,
-  --show_current_context_start = true,
-  char = '▏',
-  filetype_exclude = {
-    'markdown'
-  },
-}
-
 -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 

@@ -1,4 +1,5 @@
 require("lazy").setup({
+  --[[
   {
     'projekt0n/github-nvim-theme',
     lazy = false, -- make sure we load this during startup if it is your main colorscheme
@@ -20,7 +21,7 @@ require("lazy").setup({
       vim.cmd('colorscheme github_dark')
     end,
   },
-  --[[
+  ]]--
   {
     'Mofiqul/vscode.nvim',
     lazy = false,
@@ -33,7 +34,6 @@ require("lazy").setup({
       require('vscode').load()
     end,
   },
-  --]]
   { 'sheerun/vim-polyglot', lazy = true },
   { "nvim-tree/nvim-web-devicons", lazy = true },
   {
@@ -102,7 +102,25 @@ require("lazy").setup({
     end
   },
   { 'nvim-treesitter/nvim-treesitter', build = ':TSUpdate'},
-  'lukas-reineke/indent-blankline.nvim',
+  {
+    'lukas-reineke/indent-blankline.nvim',
+    event = "VimEnter",
+    config = function()
+      require('ibl').setup{
+        indent = {
+          char = '▏',
+        },
+        scope = { enabled = false },
+        exclude = {
+          filetypes = {'markdown'},
+        },
+      }
+
+      local hooks = require "ibl.hooks"
+      hooks.register(hooks.type.WHITESPACE, hooks.builtin.hide_first_space_indent_level)
+      hooks.register(hooks.type.WHITESPACE, hooks.builtin.hide_first_tab_indent_level)
+    end,
+  },
   {
     'nvim-tree/nvim-tree.lua',
     -- 'kyazdani42/nvim-tree.lua',
