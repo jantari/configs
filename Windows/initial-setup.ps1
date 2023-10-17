@@ -25,6 +25,10 @@ reg.exe add "HKCU\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" 
 reg.exe add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v EnableSnapAssistFlyout /t REG_DWORD /d 0 /f
 ## Disable Aero Shake
 reg.exe add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v DisallowShaking /t REG_DWORD /d 1 /f
+## Open File Explorer with "This PC" as the initial view
+reg.exe add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v LaunchTo /t REG_DWORD /d 1 /f
+## Always show file extensions
+reg.exe add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v HideFileExt /t REG_DWORD /d 0 /f
 
 # Wait for winget command to be come available (may need to wait for the "Microsoft.DesktopAppInstaller" app to update through the Store first)
 Write-Host "Waiting for winget to become available ..."
@@ -37,6 +41,7 @@ do {
 
 # Install some software as non-portable versions
 @(
+    'Microsoft.VCRedist.2015+.x64', # Dependency of neovim
     '7zip.7zip',
     'SumatraPDF.SumatraPDF',
     'VideoLAN.VLC',
@@ -86,10 +91,10 @@ git clone --origin github-https https://github.com/jantari/configs.git "${env:US
 robocopy.exe "${env:USERPROFILE}\repos\configs\neovim" "${env:LOCALAPPDATA}\nvim" /E /XC /XN /XO /NP
 
 # Set up PowerShell profile
-[string]$Pwsh5Profile = [System.Environment]::GetFolderPath('MyDocuments') + '\PowerShell\Microsoft.PowerShell_profile.ps1'
-[string]$Pwsh7Profile = [System.Environment]::GetFolderPath('MyDocuments') + '\WindowsPowerShell\Microsoft.PowerShell_profile.ps1'
-Copy-Item -LiteralPath "${env:USERPROFILE}\repos\configs\Windows\files\Microsoft.PowerShell_profile.ps1" -Destination $Pwsh5Profile
-Copy-Item -LiteralPath "${env:USERPROFILE}\repos\configs\Windows\files\Microsoft.PowerShell_profile.ps1" -Destination $Pwsh7Profile
+[string]$Pwsh5Profile = [System.Environment]::GetFolderPath('MyDocuments') + '\PowerShell'
+[string]$Pwsh7Profile = [System.Environment]::GetFolderPath('MyDocuments') + '\WindowsPowerShell'
+Robocopy.exe "${env:USERPROFILE}\repos\configs\Windows\files" "$Pwsh5Profile" "Microsoft.PowerShell_profile.ps1" /NJH /NJS /NP /XO
+Robocopy.exe "${env:USERPROFILE}\repos\configs\Windows\files" "$Pwsh7Profile" "Microsoft.PowerShell_profile.ps1" /NJH /NJS /NP /XO
 
 . $PROFILE
 
