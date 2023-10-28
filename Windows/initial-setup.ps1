@@ -18,6 +18,19 @@ Start-Process -FilePath powershell.exe -Verb RunAs -Wait -ArgumentList @(
 )
 
 # Settings
+## Disable notifications from Ad / spam apps
+reg.exe add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Notifications\Settings\Windows.SystemToast.Suggested" /v Enabled /t REG_DWORD /d 0 /f
+reg.exe add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Notifications\Settings\Windows.SystemToast.HelloFace" /v Enabled /t REG_DWORD /d 0 /f
+## Disable Start Menu ads (W10 only?)
+reg.exe add "HKCU\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" /v SystemPaneSuggestionsEnabled /t REG_DWORD /d 0 /f
+## Disable Settings app suggested bing searches (W10 only?)
+reg.exe add "HKCU\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" /v SubscribedContent-338393Enabled /t REG_DWORD /d 0 /f
+reg.exe add "HKCU\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" /v SubscribedContent-353694Enabled /t REG_DWORD /d 0 /f
+reg.exe add "HKCU\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" /v SubscribedContent-353696Enabled /t REG_DWORD /d 0 /f
+## Disable "News and Interests" in taskbar (W10 only)
+reg.exe add "HKCU\Software\Microsoft\Windows\CurrentVersion\Feeds" /v ShellFeedsTaskbarViewMode /t REG_DWORD /d 2 /f
+## Disable "Search highlights" (weird icons and spam articles in the search bar)
+reg.exe add "HKCU\Software\Microsoft\Windows\CurrentVersion\SearchSettings" /v IsDynamicSearchBoxEnabled /t REG_DWORD /d 0 /f
 ## Dark Theme
 reg.exe add "HKCU\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v SystemUsesLightTheme /t REG_DWORD /d 0 /f
 reg.exe add "HKCU\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v AppsUseLightTheme /t REG_DWORD /d 0 /f
@@ -29,6 +42,8 @@ reg.exe add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /
 reg.exe add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v LaunchTo /t REG_DWORD /d 1 /f
 ## Always show file extensions
 reg.exe add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v HideFileExt /t REG_DWORD /d 0 /f
+## Set up CMD shell prompt and some default aliases for interactive shells
+reg.exe add "HKCU\Software\Microsoft\Command Processor" /v AutoRun /t REG_SZ /d 'prompt $E[92m%USERNAME%@%COMPUTERNAME%$E[0m:$E[32m$P$E[0m$_$E(0mq$E(B cmd$G & doskey ls=dir /o $* & doskey cat=type $* & doskey reboot=shutdown /r /t 0 $* & doskey clear=cls' /f
 
 # Wait for winget command to be come available (may need to wait for the "Microsoft.DesktopAppInstaller" app to update through the Store first)
 Write-Host "Waiting for winget to become available ..."
