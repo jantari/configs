@@ -46,6 +46,7 @@ reg.exe add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /
 reg.exe add "HKCU\Software\Microsoft\Command Processor" /v AutoRun /t REG_SZ /d 'prompt $E[92m%USERNAME%@%COMPUTERNAME%$E[0m:$E[32m$P$E[0m$_$E(0mq$E(B cmd$G & doskey ls=dir /o $* & doskey cat=type $* & doskey reboot=shutdown /r /t 0 $* & doskey clear=cls' /f
 
 # Wait for winget command to be come available (may need to wait for the "Microsoft.DesktopAppInstaller" app to update through the Store first)
+# TODO: periodically re-run the store update CIM method because the store itself updating can sometimes interrupt and stop the updating process of other apps
 Write-Host "Waiting for winget to become available ..."
 do {
     $DAIVersion = (Get-AppxPackage -Name Microsoft.DesktopAppInstaller).Version
