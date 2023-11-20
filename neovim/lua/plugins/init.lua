@@ -101,7 +101,53 @@ require("lazy").setup({
       }
     end
   },
-  { 'nvim-treesitter/nvim-treesitter', build = ':TSUpdate'},
+  {
+    'nvim-treesitter/nvim-treesitter',
+    build = ":TSUpdate",
+    config = function()
+      -- This "works" (if I first clone https://github.com/JamesWTruher/tree-sitter-PowerShell.git
+      -- branch operator001 and install the 'zig' compiler) but it doesn't have any feature enabled
+      -- in :healthcheck so the parser doesn't provide any highlighting. Idk yet whether that's my
+      -- config or just the treesitter parser being that incomplete still.
+      --[[
+      local parser_config = require('nvim-treesitter.parsers').get_parser_configs()
+      parser_config.powershell = {
+        install_info = {
+          url = "~/Downloads/tree-sitter-windows-x64/tree-sitter-PowerShell",
+          files = {
+            "src/scanner.c",
+            "src/parser.c",
+          },
+          branch = "operator001",
+          generate_requires_npm = false,
+          requires_generate_from_grammar = false,
+        },
+        filetype = "ps1",
+        used_by = { "psm1", "psd1", "pssc", "psxml", "cdxml" }
+      }
+      ]]--
+
+      require('nvim-treesitter.configs').setup{
+        ensure_installed = { "go", "python", "dockerfile" },
+        sync_install = false,
+        auto_install = false,
+
+        highlight = {
+          enable = true,
+          --use_languagetree = true,
+          disable = { "lua" },
+          additional_vim_regex_highlighting = false,
+        },
+      }
+
+      -- Hide all semantic highlights from the LSP.
+      -- These load in delayed and are worse than vims built-in
+      -- syntax engine or treesitter (at least with ps1 files).
+      for _, group in ipairs(vim.fn.getcompletion("@lsp", "highlight")) do
+        vim.api.nvim_set_hl(0, group, {})
+      end
+    end,
+  },
   {
     'lukas-reineke/indent-blankline.nvim',
     event = "VimEnter",
@@ -123,8 +169,7 @@ require("lazy").setup({
   },
   {
     'nvim-tree/nvim-tree.lua',
-    -- 'kyazdani42/nvim-tree.lua',
-    lazy = false,
+    event = "VimEnter",
     config = function()
       -- Nvimtree configuration
       require('nvim-tree').setup{

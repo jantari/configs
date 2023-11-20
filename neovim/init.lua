@@ -69,18 +69,6 @@ vim.o.showmode = false
 --vim.api.nvim_set_hl(0, 'VertSplit', {ctermbg='NONE', bg='NONE'})
 --vim.api.nvim_set_hl(0, 'Comment', {link = 'NonText'})
 
-require'nvim-treesitter.configs'.setup {
-  ensure_installed = { "go", "python", "dockerfile" },
-  sync_install = false,
-  auto_install = false,
-
-  highlight = {
-    enable = true,
-    use_languagetree = true,
-    disable = { "lua" },
-  }
-}
-
 -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
@@ -96,7 +84,6 @@ require('lspconfig').powershell_es.setup{
   bundle_path = '~/AppData/Local/nvim-data/lsp_servers/powershell_es',
   capabilities = capabilities,
 }
-
 
 -- Completion setup
 vim.o.completeopt = 'menu,menuone,noselect'
