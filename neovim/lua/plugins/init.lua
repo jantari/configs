@@ -211,6 +211,7 @@ require("lazy").setup({
       -- animation = true,
       -- insert_at_start = true,
       -- …etc.
+      auto_hide = 1,
       icons = {
         inactive = {separator = {left = '▏', right = ''}},
         separator = {left = '▏', right = ''},
