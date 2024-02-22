@@ -17,6 +17,17 @@ Start-Process -FilePath powershell.exe -Verb RunAs -Wait -ArgumentList @(
     '"Get-CimInstance -Namespace "root\cimv2\mdm\dmmap" -ClassName "MDM_EnterpriseModernAppManagement_AppManagement01" | Invoke-CimMethod -MethodName "UpdateScanMethod""'
 )
 
+# Update AppInstaller / winget
+$CurlArgs = @(
+    '--fail',
+    '--location' # Follow redirects
+    '--tls-max', '1.2',
+    "https://github.com/microsoft/winget-cli/releases/download/v1.6.3482/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle",
+    '--output',
+    "$env:TEMP\ai.msixbundle"
+)
+curl.exe @CurlArgs
+
 # Settings
 ## Disable notifications from Ad / spam apps
 reg.exe add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Notifications\Settings\Windows.SystemToast.Suggested" /v Enabled /t REG_DWORD /d 0 /f
@@ -49,12 +60,27 @@ reg.exe add "HKCU\Software\Microsoft\Command Processor" /v AutoRun /t REG_SZ /d 
 # Wait for winget command to be come available (may need to wait for the "Microsoft.DesktopAppInstaller" app to update through the Store first)
 # TODO: periodically re-run the store update CIM method because the store itself updating can sometimes interrupt and stop the updating process of other apps
 Write-Host "Waiting for winget to become available ..."
+$sw = [System.Diagnostics.Stopwatch]::StartNew()
+$OldProgressPreference = $ProgressPreference
+$ProgressPreference = 'SilentlyContinue'
 do {
     $DAIVersion = (Get-AppxPackage -Name Microsoft.DesktopAppInstaller).Version
     $WingetCmd  = Get-Command -Name winget -CommandType Application -ErrorAction Ignore
     Write-Host "[$(Get-Date -Format 'HH:mm:ss')] winget available: $( if ($WingetCmd) { "True" } else { "False" } ), DesktopAppInstaller version: $DAIVersion"
+
+    if ($sw.Elapsed -gt [TimeSpan]::FromMinutes(5)) {
+        # Attempt install / update. This will fail for as long as some dependencies aren't there yet.
+        Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Attempting DesktopAppInstaller update via msixbundle ..."
+        Add-AppxPackage -Path "$env:TEMP\ai.msixbundle" -ErrorAction SilentlyContinue
+        $sw.Restart()
+    }
     Start-Sleep -Seconds 10
 } until ($WingetCmd)
+$ProgressPreference = $OldProgressPreference
+$sw.Stop()
+
+$preDesktop = [Environment]::GetFolderPath('Desktop'), [Environment]::GetFolderPath('CommonDesktop') |
+    Get-ChildItem -Filter '*.lnk'
 
 # Install some software as non-portable versions
 @(
@@ -68,6 +94,20 @@ do {
     'Microsoft.PowerShell.Preview'
 ) | ForEach-Object {
     winget install --source winget --id "$_" --scope machine --silent --no-upgrade
+}
+
+# Cleaning up new unwhanted desktop icons
+$postDesktop = [Environment]::GetFolderPath('Desktop'), [Environment]::GetFolderPath('CommonDesktop') |
+    Get-ChildItem -Filter '*.lnk'
+
+Write-Host "Cleaning up winget created desktop icons..."
+$postDesktop | Where-Object FullName -notin $preDesktop.FullName | % {
+    Remove-Item -LiteralPath $_.FullName -ErrorAction SilentlyContinue
+    if ($?) {
+        Write-Host "Cleaned up $($_.Name)"
+    } else {
+        Write-Host "Could not clean up $($_.Name)"
+    }
 }
 
 # Install scoop
@@ -98,6 +138,18 @@ scoop install @ScoopPackages
 
 # Clean up scoop package cache
 scoop cache rm *
+
+# Remove some default apps I don't use
+@(
+    'Microsoft.WindowsFeedbackHub',
+    'Microsoft.GetHelp'
+    'Microsoft.Getstarted',
+    'Microsoft.MixedReality.Portal',
+    'Microsoft.SkypeApp',
+    'Microsoft.Microsoft3DViewer',
+    'Microsoft.MicrosoftSolitaireCollection',
+    'Microsoft.XboxApp'
+) | Foreach-Object { Get-AppxPackage -Name $_ | Remove-AppxPackage }
 
 if (-not (Test-Path -Path "$env:USERPROFILE\repos")) { mkdir "$env:USERPROFILE\repos" }
 
@@ -177,7 +229,7 @@ winget install --source msstore --id "9NCBCSZSJRSB"  --accept-source-agreements 
 Start-Process -FilePath powershell.exe -Verb RunAs -Wait -ArgumentList @(
     '-NoProfile',
     '-Command',
-    '"wsl --install --no-distribution"'
+    '"wsl --install --distribution Ubuntu-22.04 --no-launch"'
 )
 
 wsl --version
