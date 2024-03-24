@@ -17,7 +17,7 @@ Start-Process -FilePath powershell.exe -Verb RunAs -Wait -ArgumentList @(
     '"Get-CimInstance -Namespace "root\cimv2\mdm\dmmap" -ClassName "MDM_EnterpriseModernAppManagement_AppManagement01" | Invoke-CimMethod -MethodName "UpdateScanMethod""'
 )
 
-# Update AppInstaller / winget
+# Download GitHub release of AppInstaller / winget
 $CurlArgs = @(
     '--fail',
     '--location' # Follow redirects
@@ -58,7 +58,6 @@ reg.exe add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /
 reg.exe add "HKCU\Software\Microsoft\Command Processor" /v AutoRun /t REG_SZ /d 'prompt $E[92m%USERNAME%@%COMPUTERNAME%$E[0m:$E[32m$P$E[0m$_$E(0mq$E(B cmd$G & doskey ls=dir /o $* & doskey cat=type $* & doskey reboot=shutdown /r /t 0 $* & doskey clear=cls' /f
 
 # Wait for winget command to be come available (may need to wait for the "Microsoft.DesktopAppInstaller" app to update through the Store first)
-# TODO: periodically re-run the store update CIM method because the store itself updating can sometimes interrupt and stop the updating process of other apps
 Write-Host "Waiting for winget to become available ..."
 $sw = [System.Diagnostics.Stopwatch]::StartNew()
 $OldProgressPreference = $ProgressPreference
@@ -96,7 +95,7 @@ $preDesktop = [Environment]::GetFolderPath('Desktop'), [Environment]::GetFolderP
     winget install --source winget --id "$_" --scope machine --silent --no-upgrade
 }
 
-# Cleaning up new unwhanted desktop icons
+# Cleaning up new unwanted desktop icons
 $postDesktop = [Environment]::GetFolderPath('Desktop'), [Environment]::GetFolderPath('CommonDesktop') |
     Get-ChildItem -Filter '*.lnk'
 
