@@ -9,7 +9,7 @@ require("lazy").setup({
         options = {
           darken = {
             sidebars = {
-              enabled = true,
+              enable = true,
             }
           },
           styles = {
@@ -44,9 +44,9 @@ require("lazy").setup({
       require('gitsigns').setup{
         current_line_blame = true,
         signs = {
-          add = { hl = "DiffAdd", text = "+", numhl = "GitSignsAddNr" },
-          delete = { hl = "DiffDelete", text = "-", numhl = "GitSignsDeleteNr" },
-          change = { hl = "DiffChange", text = "±", numhl = "GitSignsChangeNr" },
+          add = { text = "+" },
+          delete = { text = "-" },
+          change = { text = "±" },
         },
         numhl = false,
         linehl = false,
@@ -58,6 +58,11 @@ require("lazy").setup({
             opts.buffer = bufnr
             vim.keymap.set(mode, l, r, opts)
           end
+
+          vim.api.nvim_set_hl(0, 'GitSignsAdd', { link = 'DiffAdd' })
+          vim.api.nvim_set_hl(0, 'GitSignsDelete', { link = 'DiffDelete' })
+          --vim.api.nvim_set_hl(0, 'GitSignsChange', { link = 'DiffChange' })
+          vim.api.nvim_set_hl(0, 'GitSignsChange', { bg = '#756515' })
 
           map('n', '<leader>hr', gs.reset_hunk)
           map('v', '<leader>hr', function() gs.reset_hunk {vim.fn.line('.'), vim.fn.line('v')} end)
